@@ -1,4 +1,5 @@
 #include "RestDog.h"
+#include "Common.h"
 
 void RestDog::PostMethod(web::http::http_request request)
 {
@@ -6,11 +7,17 @@ void RestDog::PostMethod(web::http::http_request request)
     std::cout << path << std::endl;
     if (path == "/start")
     {
+        dog_log << TIMEDOG << "[start]\n";
+        dog_log.flush();
 //        handle_start(request);
+        request.reply(web::http::status_codes::OK, "start");
     }
     else if (path == "/stop")
     {
+        dog_log << TIMEDOG << "[stop]\n";
+        dog_log.flush();
 //        handle_stop(request);
+        request.reply(web::http::status_codes::OK, "stop");
     }
     else
     {
@@ -26,7 +33,8 @@ void RestDog::CreateServer()
 
     listener.support(web::http::methods::POST, RestDog::PostMethod);
 
-    try {
+    try
+    {
         listener.open().then([&uri](){
             std::cout << "开始监听: " << uri.to_string() << std::endl;
         }).wait();
