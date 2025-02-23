@@ -1,13 +1,16 @@
 #ifndef DOG_COMMON_H
 #define DOG_COMMON_H
+
 #include <fstream>
+
+#include "DogLog.h"
 
 #define TIMEDOG GetTime()
 
 /**
  * @brief 日志
  */
-extern std::ofstream dog_log;
+extern DogLog dog_log;
 
 /**
  * @brief 获取当前时间字符串

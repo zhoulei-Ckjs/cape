@@ -2,8 +2,9 @@
 
 #include "WorkFlow.h"
 #include "RestDog.h"
+#include "DogLog.h"
 
-std::ofstream dog_log("dog.log");
+DogLog dog_log;
 
 void test()
 {
@@ -16,9 +17,11 @@ void test()
 
 int main()
 {
+    dog_log.Open("dog.log");
     RestDog dog;
     dog.CreateServer();
     while(true)
         sleep(1);
+    std::cout << "123" << std::endl;
     return 0;
 }

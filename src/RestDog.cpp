@@ -7,15 +7,13 @@ void RestDog::PostMethod(web::http::http_request request)
     std::cout << path << std::endl;
     if (path == "/start")
     {
-        dog_log << TIMEDOG << "[start]\n";
-        dog_log.flush();
+        dog_log << TIMEDOG << "[start]" << DogLog::endl;
 //        handle_start(request);
         request.reply(web::http::status_codes::OK, "start");
     }
     else if (path == "/stop")
     {
-        dog_log << TIMEDOG << "[stop]\n";
-        dog_log.flush();
+        dog_log << TIMEDOG << "[stop]" << DogLog::endl;
 //        handle_stop(request);
         request.reply(web::http::status_codes::OK, "stop");
     }
