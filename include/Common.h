@@ -10,7 +10,10 @@
 /**
  * @brief 日志
  */
-extern DogLog dog_log;
+namespace dog
+{
+    extern DogLog cout;
+}
 
 /**
  * @brief 获取当前时间字符串

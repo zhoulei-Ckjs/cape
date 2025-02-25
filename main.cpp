@@ -2,9 +2,7 @@
 
 #include "WorkFlow.h"
 #include "RestDog.h"
-#include "DogLog.h"
-
-DogLog dog_log;
+#include "Common.h"
 
 void test()
 {
@@ -17,7 +15,7 @@ void test()
 
 int main()
 {
-    dog_log.Open("dog.log");
+    dog::cout.Open("dog.log");
     RestDog dog;
     dog.CreateServer();
     while(true)
