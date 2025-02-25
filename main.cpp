@@ -16,6 +16,7 @@ void test()
 int main()
 {
     dog::cout.Open("dog.log");
+    dog::cout << dog::time << "监控程序开始运行！" << dog::endl;
     RestDog dog;
     dog.CreateServer();
     while(true)
