@@ -39,7 +39,7 @@ int WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 
 int WorkFlow::StopProgram(std::string name)
 {
-    std::string command = "pkill ";
+    std::string command = "pkill -9 ";
     command += name;
     std::cout << "正在停止进程 [" << name << "] ..." << std::endl;
 

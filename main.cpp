@@ -3,7 +3,6 @@
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
     std::vector<std::string> args_vec;
     args_vec.push_back("ls");
     args_vec.push_back("-lh");
