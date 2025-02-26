@@ -9,7 +9,6 @@ void RestDog::PostMethod(web::http::http_request request)
     if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
-//        handle_start(request);
         request.reply(web::http::status_codes::OK, "start odsp success!");
     }
     else if(path == "/start/ret")

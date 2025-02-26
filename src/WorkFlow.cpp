@@ -1,9 +1,9 @@
-#include "../include/WorkFlow.h"
-
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <iostream>
+
+#include "WorkFlow.h"
+#include "DogLog.h"
 
 StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
@@ -15,23 +15,23 @@ StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         return FORK_FAILED;
     if(pid == 0)
     {
-        std::cout << "正在启动进程 [" << args_vec[0] << "] ..." << std::endl;
-        // 使用 execvp 启动新的程序
+        dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
+        /// 使用 execvp 启动新的程序
         char *args[4] = {nullptr};
         for(int i = 0; i < args_vec.size(); i++)
         {
             args[i] = const_cast<char*>(args_vec[i].c_str());
         }
-        execvp(args[0], args); // 这会用 ls 命令替换当前子进程
-        std::cerr << "进程启动失败" << std::endl;
-        return START_FAILED;
+        execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
+        dog::cout << dog::time << "[Error] 进程启动失败！" << dog::endl;
+        exit(0);
     }
     else
     {
-        // 父进程代码
-        std::cout << "父进程：等待子进程结束" << std::endl;
-        wait(nullptr); // 等待子进程结束
-        std::cout << "子进程结束" << std::endl;
+        /// 父进程代码
+        dog::cout << dog::time << "父进程：等待子进程结束" << dog::endl;
+        wait(nullptr);  ///< 等待子进程结束
+        dog::cout << dog::time << "子进程结束" << dog::endl;
     }
 
     return START_SUCCESS;
