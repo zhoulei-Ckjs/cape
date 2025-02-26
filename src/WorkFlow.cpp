@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <iostream>
 
-int WorkFlow::StartProgram(std::vector<std::string>& args_vec)
+StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
     if(args_vec.empty())
         return INCOMPLETE_ARGS;
@@ -24,7 +24,7 @@ int WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         }
         execvp(args[0], args); // 这会用 ls 命令替换当前子进程
         std::cerr << "进程启动失败" << std::endl;
-        return 1;
+        return START_FAILED;
     }
     else
     {
@@ -37,7 +37,7 @@ int WorkFlow::StartProgram(std::vector<std::string>& args_vec)
     return START_SUCCESS;
 }
 
-int WorkFlow::StopProgram(std::string name)
+StopStatus WorkFlow::StopProgram(std::string name)
 {
     std::string command = "pkill -9 ";
     command += name;
@@ -46,9 +46,11 @@ int WorkFlow::StopProgram(std::string name)
     if (system(command.c_str()) == 0)
     {
         std::cout << "进程 [" << name << "] 成功杀死." << std::endl;
+        return STOP_SUCCESS;
     }
     else
     {
         std::cerr << "无法杀死 [" << name << "]" << std::endl;
+        return STOP_FAILED;
     }
 }
