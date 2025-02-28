@@ -1,15 +1,22 @@
 #include "RestDog.h"
-#include "Common.h"
 #include "WorkFlow.h"
+#include "DogLog.h"
+#include "Common.h"
 
 void RestDog::PostMethod(web::http::http_request request)
 {
     auto path = request.relative_uri().path();
     std::cout << path << std::endl;
+
+    std::vector<std::string> args;
     if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
+        args.push_back("/home/hongshan/ODSP/start.sh");
+
+        WorkFlow::StartProgram(args);
         request.reply(web::http::status_codes::OK, "start odsp success!");
+        dog::cout << "done start odsp" << dog::endl;
     }
     else if(path == "/start/ret")
     {
@@ -102,22 +109,29 @@ void RestDog::PostMethod(web::http::http_request request)
     }
 }
 
-void RestDog::CreateServer()
+void RestDog::SetUri(std::string uri)
 {
-    web::uri_builder uri(U("http://0.0.0.0:8888"));
-    auto addr = uri.to_uri();
-    static web::http::experimental::listener::http_listener listener(addr);
+    uri_ = new web::uri_builder(U(uri));
+    auto addr = uri_->to_uri();
+    listener_ = new web::http::experimental::listener::http_listener(addr);
+}
 
-    listener.support(web::http::methods::POST, RestDog::PostMethod);
-
+void RestDog::Start()
+{
+    listener_->support(web::http::methods::POST, PostMethod);
     try
     {
-        listener.open().then([&uri](){
-            std::cout << "开始监听: " << uri.to_string() << std::endl;
+        listener_->open().then([=](){
+            std::cout << "开始监听: " << this->uri_->to_string() << std::endl;
         }).wait();
     }
     catch (const std::exception& e)
     {
         std::cerr << "错误: " << e.what() << std::endl;
     }
+}
+
+void RestDog::Stop()
+{
+    listener_->close().wait();  ///< 等待所有操作完成
 }

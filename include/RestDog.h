@@ -3,14 +3,20 @@
 
 #include <cpprest/uri_builder.h>
 #include <cpprest/http_listener.h>
+#include <string>
 
 class RestDog
 {
 public:
-    void CreateServer();
-
-private:
+    friend class WorkFlow;
+    void SetUri(std::string uri);
+    void Start();
+    void Stop();
     static void PostMethod(web::http::http_request request);
+
+private :
+    web::uri_builder* uri_;
+    web::http::experimental::listener::http_listener *listener_;
 };
 
 #endif //DOG_RESTDOG_H

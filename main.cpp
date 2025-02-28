@@ -2,16 +2,8 @@
 
 #include "WorkFlow.h"
 #include "RestDog.h"
+#include "DogLog.h"
 #include "Common.h"
-
-void test()
-{
-    std::vector<std::string> args_vec;
-    args_vec.push_back("ls");
-    args_vec.push_back("-lh");
-    WorkFlow::StartProgram(args_vec);
-    WorkFlow::StopProgram("main");
-}
 
 void StartDog()
 {
@@ -30,10 +22,18 @@ int main()
 {
     dog::cout.Open("dog.log");
     StartDog();
-    RestDog dog;
-    dog.CreateServer();
-    while(true)
+
+    RestDog rest_dog;
+    rest_dog.SetUri("http://0.0.0.0:8888");
+    rest_dog.Start();
+
+    while(!stop_flag)
+    {
         sleep(1);
-    std::cout << "123" << std::endl;
+    }
+
+    rest_dog.Stop();
+    dog::cout << "over main" << dog::endl;
+
     return 0;
 }

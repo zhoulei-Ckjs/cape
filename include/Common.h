@@ -1,8 +1,6 @@
 #ifndef DOG_COMMON_H
 #define DOG_COMMON_H
 
-#include <fstream>
-
-#include "DogLog.h"
+extern int stop_flag;
 
 #endif //DOG_COMMON_H
