@@ -12,11 +12,14 @@ void RestDog::PostMethod(web::http::http_request request)
     if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
-        args.push_back("/home/hongshan/ODSP/start.sh");
+//        args.push_back("/home/hongshan/ODSP/start.sh");
+        args.push_back("/root/dog/cmake-build-debug/test/test");
 
-        WorkFlow::StartProgram(args);
-        request.reply(web::http::status_codes::OK, "start odsp success!");
-        dog::cout << "done start odsp" << dog::endl;
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "创建失败!");
     }
     else if(path == "/start/ret")
     {

@@ -4,20 +4,27 @@
 
 #include "WorkFlow.h"
 #include "DogLog.h"
-#include "Common.h"
 #include "RestDog.h"
 
 StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
+    dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
+    
     if(args_vec.empty())
-        return INCOMPLETE_ARGS;
+    {
+        dog::cout << dog::time << "[Error]: 启动参数为空!!!" << dog::endl;
+        return START_FAILED;
+    }
 
     pid_t pid = fork();
     if(pid < 0)
-        return FORK_FAILED;
+    {
+        dog::cout << dog::time << "[Error]: 启动时创建进程失败!!!" << dog::endl;
+        return START_FAILED;
+    }
+
     if(pid == 0)
     {
-        dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
         /// 使用 execvp 启动新的程序
         char *args[4] = {nullptr};
         for(int i = 0; i < args_vec.size(); i++)
@@ -26,23 +33,41 @@ StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         }
         execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
 
-        dog::cout << dog::time << "[Error] 进程启动失败！退出！！" << dog::endl;
+        dog::cout << dog::time << "[child][Error]: 进程启动失败, 退出!!!" << dog::endl;
         /// 在调用execvp失败的情况下，无法调用exit退出子进程，由于cpprest的原因。
         kill(getpid(), SIGKILL);
     }
-    else
+
+    dog::cout << dog::time << "启动进程 [" << args_vec[0] << "] 成功!" << dog::endl;
+    return START_SUCCESS;
+}
+
+std::vector<int> WorkFlow::CheckProgram(const std::string& name)
+{
+    std::vector<int> ret;
+    char cmd[128];
+    snprintf(cmd, sizeof(cmd), "pgrep -x %s", name.c_str());
+
+    // 打开管道执行命令
+    FILE* fp = popen(cmd, "r");
+    if (fp == nullptr)
     {
-        /// 父进程代码
-        dog::cout << dog::time << "父进程：等待子进程结束" << dog::endl;
-        pid_t wpid = waitpid(pid, nullptr, 0);
-        if (wpid == -1)
-        {
-            dog::cout << dog::time << "[Error] 等待子进程失败！" << dog::endl;
-        }
-        dog::cout << dog::time << "子进程结束" << dog::endl;
+        dog::cout << dog::time << "执行命令失败" << cmd << dog::endl;
+        return ret;
     }
 
-    return START_SUCCESS;
+    // 读取命令输出
+    char buffer[16];
+
+    while (fgets(buffer, sizeof(buffer), fp) != nullptr)
+    {
+        std::string temp(buffer);
+        temp.pop_back();
+        ret.push_back(stoi(temp));
+    }
+
+    fclose(fp);
+    return ret;
 }
 
 StopStatus WorkFlow::StopProgram(std::string name)
