@@ -79,16 +79,16 @@ StopStatus WorkFlow::StopProgram(std::string name)
 {
     std::string command = "pkill -9 ";
     command += name;
-    std::cout << "正在停止进程 [" << name << "] ..." << std::endl;
+    dog::cout << dog::time << "正在停止进程 [" << name << "] ..." << dog::endl;
 
     if (system(command.c_str()) == 0)
     {
-        std::cout << "进程 [" << name << "] 成功杀死." << std::endl;
+        dog::cout << dog::time << "进程 [" << name << "] 成功杀死." << dog::endl;
         return STOP_SUCCESS;
     }
     else
     {
-        std::cerr << "无法杀死 [" << name << "]" << std::endl;
+        dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
         return STOP_FAILED;
     }
 }

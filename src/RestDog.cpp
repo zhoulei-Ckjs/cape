@@ -6,7 +6,6 @@
 void RestDog::PostMethod(web::http::http_request request)
 {
     auto path = request.relative_uri().path();
-    std::cout << path << std::endl;
 
     std::vector<std::string> args;
     if (path == "/start/odsp")
@@ -100,44 +99,82 @@ void RestDog::PostMethod(web::http::http_request request)
     else if (path == "/stop/odsp")
     {
         dog::cout << dog::time << "[stop odsp]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+
+        StopStatus status = WorkFlow::StopProgram("odsp");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/ret")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop ret]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("ret");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/event_transfer")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop event_transfer]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("event_transfer");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+    }
+    else if(path == "/stop/event_repository")
+    {
+        dog::cout << dog::time << "[stop event_repository]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("event_repository");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/rts")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop rts]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("rts");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/wovt")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop wovt]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("wovt");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/logon")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop logon]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("logon");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/stop/uuas")
     {
-        dog::cout << dog::time << "[stop]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "stop odsp success!");
+        dog::cout << dog::time << "[stop uuas]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("uuas");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
     }
     else if(path == "/upload")
     {
