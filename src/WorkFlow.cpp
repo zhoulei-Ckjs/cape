@@ -9,10 +9,16 @@
 StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
     dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
-    
+
     if(args_vec.empty())
     {
         dog::cout << dog::time << "[Error]: 启动参数为空!!!" << dog::endl;
+        return START_FAILED;
+    }
+
+    if (access(args_vec[0].c_str(), F_OK) != 0)
+    {
+        dog::cout << dog::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << dog::endl;
         return START_FAILED;
     }
 
@@ -33,12 +39,11 @@ StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         }
         execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
 
-        dog::cout << dog::time << "[child][Error]: 进程启动失败, 退出!!!" << dog::endl;
+        dog::cout << dog::time << "[child][Error]: 进程 [" << args[0] << "] 失败, 退出!!!" << dog::endl;
         /// 在调用execvp失败的情况下，无法调用exit退出子进程，由于cpprest的原因。
         kill(getpid(), SIGKILL);
     }
 
-    dog::cout << dog::time << "启动进程 [" << args_vec[0] << "] 成功!" << dog::endl;
     return START_SUCCESS;
 }
 

@@ -12,50 +12,90 @@ void RestDog::PostMethod(web::http::http_request request)
     if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
-//        args.push_back("/home/hongshan/ODSP/start.sh");
-        args.push_back("/root/dog/cmake-build-debug/test/test");
+        args.push_back("/home/hongshan/ODSP/start.sh");
 
         StartStatus status = WorkFlow::StartProgram(args);
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "创建失败!");
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/ret")
     {
         dog::cout << dog::time << "[start ret]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start ret success!");
+        args.push_back("/home/hongshan/RET/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/event_transfer")
     {
         dog::cout << dog::time << "[start event_transfer]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start event_transfer success!");
+        args.push_back("/home/hongshan/BEDD_TRANSFER/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+    }
+    else if(path == "/start/event_repository")
+    {
+        dog::cout << dog::time << "[start event_repository]" << dog::endl;
+        args.push_back("/home/hongshan/BEDD/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/rts")
     {
         dog::cout << dog::time << "[start rts]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start rts success!");
+        args.push_back("/home/hongshan/RTS/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/wovt")
     {
         dog::cout << dog::time << "[start wovt]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start wovt success!");
+        args.push_back("/home/hongshan/WOVT/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/logon")
     {
         dog::cout << dog::time << "[start logon]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start logon success!");
+        args.push_back("/home/hongshan/LOGON/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if(path == "/start/uuas")
     {
         dog::cout << dog::time << "[start uuas]" << dog::endl;
-//        handle_start(request);
-        request.reply(web::http::status_codes::OK, "start uuas success!");
+        args.push_back("/home/hongshan/UUAS/start.sh");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
     }
     else if (path == "/stop/odsp")
     {
