@@ -8,6 +8,7 @@ void RestDog::PostMethod(web::http::http_request request)
     auto path = request.relative_uri().path();
 
     std::vector<std::string> args;
+    char replay_buf[64];
     if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
@@ -175,6 +176,102 @@ void RestDog::PostMethod(web::http::http_request request)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
             request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+    }
+    else if (path == "/check/odsp")
+    {
+        dog::cout << dog::time << "[check odsp]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("odsp");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "odsp");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "odsp", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/ret")
+    {
+        dog::cout << dog::time << "[check ret]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("ret");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "ret");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "ret", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/event_transfer")
+    {
+        dog::cout << dog::time << "[check event_transfer]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("event_transfer");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "event_transfer");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "event_transfer", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/event_repository")
+    {
+        dog::cout << dog::time << "[check event_repository]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("event_repository");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "event_repository");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "event_repository", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/rts")
+    {
+        dog::cout << dog::time << "[check rts]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("rts");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "rts");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "rts", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/wovt")
+    {
+        dog::cout << dog::time << "[check wovt]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("wovt");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "wovt");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "wovt", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/logon")
+    {
+        dog::cout << dog::time << "[check logon]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("logon");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "logon");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "logon", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
+    }
+    else if(path == "/check/uuas")
+    {
+        dog::cout << dog::time << "[check uuas]" << dog::endl;
+
+        std::vector<int> processes = WorkFlow::CheckProgram("uuas");
+
+        if(processes.empty())
+            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "uuas");
+        else
+            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "uuas", processes.size());
+        request.reply(web::http::status_codes::OK, replay_buf);
     }
     else if(path == "/upload")
     {
