@@ -95,6 +95,7 @@ StopStatus WorkFlow::StopProgram(std::string name)
             return STOP_FAILED;
         }
 
+        dog::cout << dog::time << "进程 [" << name << "] 不存在." << dog::endl;
         return STOP_SUCCESS;
     }
 }
