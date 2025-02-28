@@ -88,7 +88,13 @@ StopStatus WorkFlow::StopProgram(std::string name)
     }
     else
     {
-        dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
-        return STOP_FAILED;
+        std::vector<int> left = CheckProgram(name);
+        if(!left.empty())
+        {
+            dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
+            return STOP_FAILED;
+        }
+
+        return STOP_SUCCESS;
     }
 }
