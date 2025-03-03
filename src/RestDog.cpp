@@ -310,23 +310,33 @@ void RestDog::PostMethod(const web::http::http_request& request)
 
 void RestDog::PutMethod(const web::http::http_request& request)
 {
-    auto fileStream = std::make_shared<concurrency::streams::ostream>();
+    auto path = request.relative_uri().path();
 
+    if(path.find("upload") == std::string::npos)
+    {
+        std::stringstream wss;
+        wss << "未定义方法：" << path.c_str();
+        request.reply(web::http::status_codes::NotImplemented, wss.str());
+        dog::cout << dog::time << wss.str() << dog::endl;
+        return;
+    }
+
+    auto fileStream = std::make_shared<concurrency::streams::ostream>();
     /// 异步打开文件流
     concurrency::streams::fstream::open_ostream(U("666.zip")).then(
             [=](const concurrency::streams::ostream& outFile)
             {
                 *fileStream = outFile;
 
-                // 读取请求体数据并写入文件
+                /// 读取请求体数据并写入文件
                 return request.body().read_to_end(fileStream->streambuf());
             }
     ).then(
             [=](size_t bytesRead)
             {
-                std::cout << "成功写入 " << bytesRead << " 字节" << std::endl;
+                dog::cout << dog::time << "成功写入 " << bytesRead << " 字节" << dog::endl;
 
-                // 关闭文件流
+                /// 关闭文件流
                 return fileStream->close();
             }
     ).then(
@@ -334,13 +344,14 @@ void RestDog::PutMethod(const web::http::http_request& request)
             {
                 try
                 {
-                    previousTask.get();  // 检查是否有异常
+                    previousTask.get();  ///< 检查是否有异常
                     request.reply(web::http::status_codes::OK, U("文件上传成功"));
+                    dog::cout << dog::time << "文件上传成功" << dog::endl;
                 }
                 catch (const std::exception& e)
                 {
-                    std::cout << "文件写入失败: " << e.what() << std::endl;
                     request.reply(web::http::status_codes::InternalError, U("文件写入失败"));
+                    dog::cout << dog::time << "文件写入失败: " << e.what() << dog::endl;
                 }
             }
     );
