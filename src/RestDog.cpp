@@ -321,6 +321,7 @@ void RestDog::PutMethod(const web::http::http_request& request)
         return;
     }
 
+    dog::cout << dog::time << "[upload file]" << dog::endl;
     auto fileStream = std::make_shared<concurrency::streams::ostream>();
     /// 异步打开文件流
     concurrency::streams::fstream::open_ostream(U("666.zip")).then(

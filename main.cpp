@@ -9,12 +9,7 @@ void StartDog()
 {
     dog::cout << dog::endl;
     dog::cout << "*********************************************" << dog::endl;
-    dog::cout << "       =999=.       *505*      *^^^^        " << dog::endl;
-    dog::cout << "       |     *     @     *    ♥    <--      " << dog::endl;
-    dog::cout << "       *     #     *     $    *      *       " << dog::endl;
-    dog::cout << "       *6666^        O.O      .(⊙_☉)        " << dog::endl;
-    dog::cout << "*********************************************" << dog::endl;
-    dog::cout << "                   Started                   " << dog::endl;
+    dog::cout << "               Mad Dog Started               " << dog::endl;
     dog::cout << "*********************************************" << dog::endl;
 }
 
