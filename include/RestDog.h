@@ -12,7 +12,8 @@ public:
     void SetUri(std::string uri);
     void Start();
     void Stop();
-    static void PostMethod(web::http::http_request request);
+    static void PostMethod(const web::http::http_request& request);
+    static void PutMethod(const web::http::http_request& request);
 
 private :
     web::uri_builder* uri_;

@@ -1,15 +1,37 @@
+#include <cpprest/filestream.h>
+
 #include "RestDog.h"
 #include "WorkFlow.h"
 #include "DogLog.h"
-#include "Common.h"
 
-void RestDog::PostMethod(web::http::http_request request)
+void RestDog::PostMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
 
     std::vector<std::string> args;
     char replay_buf[64];
-    if (path == "/start/odsp")
+    if(path == "/start/test")
+    {
+        dog::cout << dog::time << "[start test]" << dog::endl;
+        args.push_back("/root/dog/cmake-build-debug/test/test");
+
+        StartStatus status = WorkFlow::StartProgram(args);
+        if(status == StartStatus::START_SUCCESS)
+            request.reply(web::http::status_codes::OK, "启动成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+    }
+    else if(path == "/stop/test")
+    {
+        dog::cout << dog::time << "[stop test]" << dog::endl;
+
+        StopStatus status = WorkFlow::StopProgram("test");
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
+        else
+            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+    }
+    else if (path == "/start/odsp")
     {
         dog::cout << dog::time << "[start odsp]" << dog::endl;
         args.push_back("/home/hongshan/ODSP/start.sh");
@@ -286,6 +308,44 @@ void RestDog::PostMethod(web::http::http_request request)
     }
 }
 
+void RestDog::PutMethod(const web::http::http_request& request)
+{
+    auto fileStream = std::make_shared<concurrency::streams::ostream>();
+
+    /// 异步打开文件流
+    concurrency::streams::fstream::open_ostream(U("666.zip")).then(
+            [=](const concurrency::streams::ostream& outFile)
+            {
+                *fileStream = outFile;
+
+                // 读取请求体数据并写入文件
+                return request.body().read_to_end(fileStream->streambuf());
+            }
+    ).then(
+            [=](size_t bytesRead)
+            {
+                std::cout << "成功写入 " << bytesRead << " 字节" << std::endl;
+
+                // 关闭文件流
+                return fileStream->close();
+            }
+    ).then(
+            [=](const pplx::task<void>& previousTask)
+            {
+                try
+                {
+                    previousTask.get();  // 检查是否有异常
+                    request.reply(web::http::status_codes::OK, U("文件上传成功"));
+                }
+                catch (const std::exception& e)
+                {
+                    std::cout << "文件写入失败: " << e.what() << std::endl;
+                    request.reply(web::http::status_codes::InternalError, U("文件写入失败"));
+                }
+            }
+    );
+}
+
 void RestDog::SetUri(std::string uri)
 {
     uri_ = new web::uri_builder(U(uri));
@@ -296,6 +356,8 @@ void RestDog::SetUri(std::string uri)
 void RestDog::Start()
 {
     listener_->support(web::http::methods::POST, PostMethod);
+    listener_->support(web::http::methods::PUT, PutMethod);
+
     try
     {
         listener_->open().then([=](){

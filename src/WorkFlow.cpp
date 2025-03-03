@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <sys/wait.h>
-#include <iostream>
 
 #include "WorkFlow.h"
 #include "DogLog.h"
