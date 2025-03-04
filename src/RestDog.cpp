@@ -305,8 +305,9 @@ void RestDog::PostMethod(const web::http::http_request& request)
 void RestDog::PutMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
+    auto paths = web::uri::split_path(request.relative_uri().path());
 
-    if(path.find("upload") == std::string::npos)
+    if(path.find("upload") == std::string::npos || paths.size() != 2)
     {
         std::stringstream wss;
         wss << "未定义方法：" << path.c_str();
@@ -315,10 +316,13 @@ void RestDog::PutMethod(const web::http::http_request& request)
         return;
     }
 
+    std::string file_name = paths.back();   ///< 获取文件名字
+
     dog::cout << dog::time << "[upload file]" << dog::endl;
+    dog::cout << dog::time << "[Accepting file " << file_name << "]" << dog::endl;
     auto fileStream = std::make_shared<concurrency::streams::ostream>();
     /// 异步打开文件流
-    concurrency::streams::fstream::open_ostream(U("666.zip")).then(
+    concurrency::streams::fstream::open_ostream(U(file_name)).then(
             [=](const concurrency::streams::ostream& outFile)
             {
                 *fileStream = outFile;
@@ -341,11 +345,11 @@ void RestDog::PutMethod(const web::http::http_request& request)
                 {
                     previousTask.get();  ///< 检查是否有异常
                     request.reply(web::http::status_codes::OK, U("文件上传成功"));
-                    dog::cout << dog::time << "文件上传成功" << dog::endl;
+                    dog::cout << dog::time << "文件接收成功" << dog::endl;
                 }
                 catch (const std::exception& e)
                 {
-                    request.reply(web::http::status_codes::InternalError, U("文件写入失败"));
+                    request.reply(web::http::status_codes::InternalError, U("文件上传失败"));
                     dog::cout << dog::time << "文件写入失败: " << e.what() << dog::endl;
                 }
             }
