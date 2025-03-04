@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include "WorkFlow.h"
 #include "RestDog.h"
 #include "DogLog.h"

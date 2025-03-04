@@ -19,7 +19,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/stop/test")
     {
@@ -29,7 +29,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if (path == "/start/odsp")
     {
@@ -40,7 +40,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/ret")
     {
@@ -51,7 +51,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/event_transfer")
     {
@@ -62,7 +62,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/event_repository")
     {
@@ -73,7 +73,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/rts")
     {
@@ -84,7 +84,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/wovt")
     {
@@ -95,7 +95,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/logon")
     {
@@ -106,7 +106,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if(path == "/start/uuas")
     {
@@ -117,7 +117,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == StartStatus::START_SUCCESS)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
     else if (path == "/stop/odsp")
     {
@@ -127,7 +127,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/ret")
     {
@@ -137,7 +137,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/event_transfer")
     {
@@ -147,7 +147,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/event_repository")
     {
@@ -157,7 +157,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/rts")
     {
@@ -167,7 +167,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/wovt")
     {
@@ -177,7 +177,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/logon")
     {
@@ -187,7 +187,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if(path == "/stop/uuas")
     {
@@ -197,7 +197,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
         if(status == STOP_SUCCESS)
             request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            request.reply(web::http::status_codes::ExpectationFailed, "停止失败!");
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
     else if (path == "/check/odsp")
     {
@@ -295,15 +295,9 @@ void RestDog::PostMethod(const web::http::http_request& request)
             snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "uuas", processes.size());
         request.reply(web::http::status_codes::OK, replay_buf);
     }
-    else if(path == "/upload")
-    {
-        dog::cout << dog::time << "[upload accepted!]" << dog::endl;
-//        handle_stop(request);
-        request.reply(web::http::status_codes::OK, "upload success!");
-    }
     else
     {
-        request.reply(web::http::status_codes::NotFound, "未知指令：" + path);
+        request.reply(web::http::status_codes::NotImplemented, "未知指令：" + path);
         dog::cout << dog::time << "未知指令：" << path << dog::endl;
     }
 }
