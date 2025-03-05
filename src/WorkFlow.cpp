@@ -30,6 +30,13 @@ StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 
     if(pid == 0)
     {
+        pid_t session_id = setsid();
+        if(session_id < 0)
+        {
+            std::cout << "创建会话失败" << std::endl;
+            dog::cout << dog::time << "创建会话失败" << dog::endl;
+            kill(getpid(), SIGKILL);
+        }
         /// 使用 execvp 启动新的程序
         char *args[4] = {nullptr};
         for(int i = 0; i < args_vec.size(); i++)
