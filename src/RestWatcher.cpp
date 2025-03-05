@@ -2,7 +2,7 @@
 
 #include "RestWatcher.h"
 #include "WorkFlow.h"
-#include "DogLog.h"
+#include "Log.h"
 
 void RestWatcher::PostMethod(const web::http::http_request& request)
 {

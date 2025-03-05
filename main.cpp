@@ -1,6 +1,6 @@
 #include "WorkFlow.h"
 #include "RestWatcher.h"
-#include "DogLog.h"
+#include "Log.h"
 #include "Common.h"
 
 void StartDog()

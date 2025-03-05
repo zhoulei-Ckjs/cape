@@ -1,5 +1,5 @@
-#ifndef DOG_DOGLOG_H
-#define DOG_DOGLOG_H
+#ifndef DOG_LOG_H
+#define DOG_LOG_H
 
 #include <fstream>
 #include <iostream>
@@ -10,7 +10,7 @@ namespace dog
 {
     class Time{};
 
-    class DogLog
+    class Log
     {
     public:
         enum OpenStatus
@@ -27,7 +27,7 @@ namespace dog
         OpenStatus Open(char* file_name);
 
         template<class T>
-        DogLog& operator<<(const T& message)
+        Log& operator<<(const T& message)
         {
             if(dog_log.is_open())
             {
@@ -40,7 +40,7 @@ namespace dog
             return *this;
         }
 
-        DogLog& operator<<(const Time& t)
+        Log& operator<<(const Time& t)
         {
             if(dog_log.is_open())
             {
@@ -57,7 +57,7 @@ namespace dog
             return *this;
         }
 
-        DogLog& operator<<(void(*__fp)(DogLog d))
+        Log& operator<<(void(*__fp)(Log d))
         {
             if(dog_log.is_open())
             {
@@ -76,8 +76,8 @@ namespace dog
     };
 
     extern Time time;
-    extern DogLog cout;
-    void endl(DogLog d);
+    extern Log cout;
+    void endl(Log d);
 }
 
-#endif //DOG_DOGLOG_H
+#endif //DOG_LOG_H

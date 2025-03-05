@@ -1,15 +1,15 @@
-#include "DogLog.h"
+#include "Log.h"
 #include <string>
 #include <chrono>
 
 namespace dog
 {
-    DogLog cout;
+    Log cout;
     Time time;
 
-    void endl(DogLog d){}
+    void endl(Log d){}
 
-    DogLog::OpenStatus DogLog::Open(char *file_name)
+    Log::OpenStatus Log::Open(char *file_name)
     {
         dog_log.open(file_name, std::ios::app | std::ios::out);
         if (dog_log.is_open())

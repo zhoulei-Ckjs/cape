@@ -2,7 +2,7 @@
 #include <sys/wait.h>
 
 #include "WorkFlow.h"
-#include "DogLog.h"
+#include "Log.h"
 #include "RestWatcher.h"
 
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
