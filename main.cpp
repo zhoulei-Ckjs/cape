@@ -3,18 +3,18 @@
 #include "Log.h"
 #include "Common.h"
 
-void StartDog()
+void Startcape()
 {
-    dog::cout << dog::endl;
-    dog::cout << "*********************************************" << dog::endl;
-    dog::cout << "               Mad Dog Started               " << dog::endl;
-    dog::cout << "*********************************************" << dog::endl;
+    cape::cout << cape::endl;
+    cape::cout << "*********************************************" << cape::endl;
+    cape::cout << "               Mad cape Started               " << cape::endl;
+    cape::cout << "*********************************************" << cape::endl;
 }
 
 int main()
 {
-    dog::cout.Open("dog.log");
-    StartDog();
+    cape::cout.Open("cape.log");
+    Startcape();
 
     RestWatcher rest_watcher;
     rest_watcher.SetUri("http://0.0.0.0:8888");
@@ -26,7 +26,7 @@ int main()
     }
 
     rest_watcher.Stop();
-    dog::cout << "over main" << dog::endl;
+    cape::cout << "over main" << cape::endl;
 
     return 0;
 }

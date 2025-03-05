@@ -7,24 +7,24 @@
 
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
-    dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
+    cape::cout << cape::time << "正在启动进程 [" << args_vec[0] << "] ..." << cape::endl;
 
     if(args_vec.empty())
     {
-        dog::cout << dog::time << "[Error]: 启动参数为空!!!" << dog::endl;
+        cape::cout << cape::time << "[Error]: 启动参数为空!!!" << cape::endl;
         return -1;
     }
 
     if (access(args_vec[0].c_str(), F_OK) != 0)
     {
-        dog::cout << dog::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << dog::endl;
+        cape::cout << cape::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << cape::endl;
         return -1;
     }
 
     pid_t pid = fork();
     if(pid < 0)
     {
-        dog::cout << dog::time << "[Error]: 启动时创建进程失败!!!" << dog::endl;
+        cape::cout << cape::time << "[Error]: 启动时创建进程失败!!!" << cape::endl;
         return -1;
     }
 
@@ -34,7 +34,7 @@ pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         if(session_id < 0)
         {
             std::cout << "创建会话失败" << std::endl;
-            dog::cout << dog::time << "创建会话失败" << dog::endl;
+            cape::cout << cape::time << "创建会话失败" << cape::endl;
             kill(getpid(), SIGKILL);
         }
         /// 使用 execvp 启动新的程序
@@ -45,7 +45,7 @@ pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         }
         execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
 
-        dog::cout << dog::time << "[child][Error]: 进程 [" << args[0] << "] 失败, 退出!!!" << dog::endl;
+        cape::cout << cape::time << "[child][Error]: 进程 [" << args[0] << "] 失败, 退出!!!" << cape::endl;
         /// 在调用execvp失败的情况下，无法调用exit退出子进程，由于cpprest的原因。
         kill(getpid(), SIGKILL);
     }
@@ -63,7 +63,7 @@ std::vector<int> WorkFlow::CheckProgram(const std::string& name)
     FILE* fp = popen(cmd, "r");
     if (fp == nullptr)
     {
-        dog::cout << dog::time << "执行命令失败" << cmd << dog::endl;
+        cape::cout << cape::time << "执行命令失败" << cmd << cape::endl;
         return ret;
     }
 
@@ -83,7 +83,7 @@ std::vector<int> WorkFlow::CheckProgram(const std::string& name)
 
 StopStatus WorkFlow::StopProgram(const std::string& name, const std::vector<int>& pids)
 {
-    dog::cout << dog::time << "正在停止进程 [" << name << "] ..." << dog::endl;
+    cape::cout << cape::time << "正在停止进程 [" << name << "] ..." << cape::endl;
     int status;             ///< 子进程退出状态
     for (auto it : pids)
     {
@@ -94,7 +94,7 @@ StopStatus WorkFlow::StopProgram(const std::string& name, const std::vector<int>
     std::vector<int> left = CheckProgram(name);
     if(left.empty())
     {
-        dog::cout << dog::time << "进程 [" << name << "] 成功杀死." << dog::endl;
+        cape::cout << cape::time << "进程 [" << name << "] 成功杀死." << cape::endl;
         return STOP_SUCCESS;
     }
     else
@@ -107,11 +107,11 @@ StopStatus WorkFlow::StopProgram(const std::string& name, const std::vector<int>
         left = CheckProgram(name);
         if(left.empty())
         {
-            dog::cout << dog::time << "进程 [" << name << "] 成功杀死." << dog::endl;
+            cape::cout << cape::time << "进程 [" << name << "] 成功杀死." << cape::endl;
             return STOP_SUCCESS;
         }
 
-        dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
+        cape::cout << cape::time << "无法杀死 [" << name << "]" << cape::endl;
         return STOP_FAILED;
     }
 }

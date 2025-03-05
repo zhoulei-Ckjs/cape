@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(dog)
+project(watcher)
 
 add_subdirectory(test)
 

@@ -15,22 +15,22 @@ void RestWatcher::PostMethod(const web::http::http_request& request)
         std::stringstream wss;
         wss << "未定义方法：" << path.c_str();
         request.reply(web::http::status_codes::NotImplemented, wss.str());
-        dog::cout << dog::time << wss.str() << dog::endl;
+        cape::cout << cape::time << wss.str() << cape::endl;
         return;
     }
     std::string command = paths.front();
     std::string program = paths.back();
-    dog::cout << dog::time << "[" << command << " " << program << "]" << dog::endl;
+    cape::cout << cape::time << "[" << command << " " << program << "]" << cape::endl;
     if(command != "start" && command != "check" && command != "stop")
     {
         request.reply(web::http::status_codes::NotImplemented, "未知命令：" + command);
-        dog::cout << dog::time << "未知命令：" << command << dog::endl;
+        cape::cout << cape::time << "未知命令：" << command << cape::endl;
         return;
     }
     if(program_exe_path_.find(program) == program_exe_path_.end())
     {
         request.reply(web::http::status_codes::NotImplemented, "未知程序：" + command);
-        dog::cout << dog::time << "未知程序：" << command << dog::endl;
+        cape::cout << cape::time << "未知程序：" << command << cape::endl;
         return;
     }
 
@@ -67,7 +67,7 @@ void RestWatcher::PostMethod(const web::http::http_request& request)
     else        ///< 不该出现，前面已经做了非 start、check、stop 判断。
     {
         request.reply(web::http::status_codes::InternalError, "内部逻辑错误");
-        dog::cout << dog::time << "内部逻辑错误" << dog::endl;
+        cape::cout << cape::time << "内部逻辑错误" << cape::endl;
     }
 }
 
@@ -81,13 +81,13 @@ void RestWatcher::PutMethod(const web::http::http_request& request)
         std::stringstream wss;
         wss << "未定义方法：" << path.c_str();
         request.reply(web::http::status_codes::NotImplemented, wss.str());
-        dog::cout << dog::time << wss.str() << dog::endl;
+        cape::cout << cape::time << wss.str() << cape::endl;
         return;
     }
 
     std::string file_name = paths.back();   ///< 获取文件名字
 
-    dog::cout << dog::time << "[Accepting file " << file_name << "]" << dog::endl;
+    cape::cout << cape::time << "[Accepting file " << file_name << "]" << cape::endl;
     auto fileStream = std::make_shared<concurrency::streams::ostream>();
     /// 异步打开文件流
     concurrency::streams::fstream::open_ostream(U(file_name)).then(
@@ -101,7 +101,7 @@ void RestWatcher::PutMethod(const web::http::http_request& request)
     ).then(
             [=](size_t bytesRead)
             {
-                dog::cout << dog::time << "成功写入 " << bytesRead << " 字节" << dog::endl;
+                cape::cout << cape::time << "成功写入 " << bytesRead << " 字节" << cape::endl;
 
                 /// 关闭文件流
                 return fileStream->close();
@@ -113,12 +113,12 @@ void RestWatcher::PutMethod(const web::http::http_request& request)
                 {
                     previousTask.get();  ///< 检查是否有异常
                     request.reply(web::http::status_codes::OK, U("文件上传成功"));
-                    dog::cout << dog::time << "文件接收成功" << dog::endl;
+                    cape::cout << cape::time << "文件接收成功" << cape::endl;
                 }
                 catch (const std::exception& e)
                 {
                     request.reply(web::http::status_codes::InternalError, U("文件上传失败"));
-                    dog::cout << dog::time << "文件写入失败: " << e.what() << dog::endl;
+                    cape::cout << cape::time << "文件写入失败: " << e.what() << cape::endl;
                 }
             }
     );
@@ -138,7 +138,7 @@ void RestWatcher::Initialize()
     program_pids_.insert({"uuas", std::vector<int>()});
 
     /// 进程路径
-    program_exe_path_.insert({"test", "/root/dog/cmake-build-debug/test/test"});
+    program_exe_path_.insert({"test", "/root/cape/cmake-build-debug/test/test"});
     program_exe_path_.insert({"odsp", "/home/hongshan/ODSP/start.sh"});
     program_exe_path_.insert({"ret", "/home/hongshan/RET/start.sh"});
     program_exe_path_.insert({"event_transfer", "/home/hongshan/BEDD_TRANSFER/start.sh"});

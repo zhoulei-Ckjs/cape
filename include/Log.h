@@ -6,7 +6,7 @@
 #include <string>
 #include <chrono>
 
-namespace dog
+namespace cape
 {
     class Time{};
 
