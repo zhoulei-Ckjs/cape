@@ -1,5 +1,5 @@
 #include "WorkFlow.h"
-#include "RestDog.h"
+#include "RestWatcher.h"
 #include "DogLog.h"
 #include "Common.h"
 
@@ -16,16 +16,16 @@ int main()
     dog::cout.Open("dog.log");
     StartDog();
 
-    RestDog rest_dog;
-    rest_dog.SetUri("http://0.0.0.0:8888");
-    rest_dog.Start();
+    RestWatcher rest_watcher;
+    rest_watcher.SetUri("http://0.0.0.0:8888");
+    rest_watcher.Start();
 
     while(!stop_flag)
     {
         sleep(1);
     }
 
-    rest_dog.Stop();
+    rest_watcher.Stop();
     dog::cout << "over main" << dog::endl;
 
     return 0;

@@ -1,10 +1,10 @@
 #include <cpprest/filestream.h>
 
-#include "RestDog.h"
+#include "RestWatcher.h"
 #include "WorkFlow.h"
 #include "DogLog.h"
 
-void RestDog::PostMethod(const web::http::http_request& request)
+void RestWatcher::PostMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
     auto paths = web::uri::split_path(request.relative_uri().path());
@@ -71,7 +71,7 @@ void RestDog::PostMethod(const web::http::http_request& request)
     }
 }
 
-void RestDog::PutMethod(const web::http::http_request& request)
+void RestWatcher::PutMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
     auto paths = web::uri::split_path(request.relative_uri().path());
@@ -124,7 +124,7 @@ void RestDog::PutMethod(const web::http::http_request& request)
     );
 }
 
-void RestDog::Initialize()
+void RestWatcher::Initialize()
 {
     /// 进程 pid
     program_pids_.insert({"test", std::vector<int>()});
@@ -149,19 +149,19 @@ void RestDog::Initialize()
     program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
 }
 
-void RestDog::SetUri(std::string uri)
+void RestWatcher::SetUri(std::string uri)
 {
     uri_ = new web::uri_builder(U(uri));
     auto addr = uri_->to_uri();
     listener_ = new web::http::experimental::listener::http_listener(addr);
 }
 
-void RestDog::Start()
+void RestWatcher::Start()
 {
     Initialize();
 
-    auto post_method = std::bind(&RestDog::PostMethod, this, std::placeholders::_1);
-    auto put_method = std::bind(&RestDog::PutMethod, this, std::placeholders::_1);
+    auto post_method = std::bind(&RestWatcher::PostMethod, this, std::placeholders::_1);
+    auto put_method = std::bind(&RestWatcher::PutMethod, this, std::placeholders::_1);
     listener_->support(web::http::methods::POST, post_method);
     listener_->support(web::http::methods::PUT, put_method);
 
@@ -177,7 +177,7 @@ void RestDog::Start()
     }
 }
 
-void RestDog::Stop()
+void RestWatcher::Stop()
 {
     listener_->close().wait();  ///< 等待所有操作完成
 }

@@ -3,7 +3,7 @@
 
 #include "WorkFlow.h"
 #include "DogLog.h"
-#include "RestDog.h"
+#include "RestWatcher.h"
 
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {

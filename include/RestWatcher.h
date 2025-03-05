@@ -1,11 +1,11 @@
-#ifndef DOG_RESTDOG_H
-#define DOG_RESTDOG_H
+#ifndef DOG_RESTWATCHER_H
+#define DOG_RESTWATCHER_H
 
 #include <cpprest/uri_builder.h>
 #include <cpprest/http_listener.h>
 #include <string>
 
-class RestDog
+class RestWatcher
 {
 public:
     friend class WorkFlow;
@@ -25,4 +25,4 @@ private :
     std::map<std::string, std::string> program_exe_path_;
 };
 
-#endif //DOG_RESTDOG_H
+#endif
