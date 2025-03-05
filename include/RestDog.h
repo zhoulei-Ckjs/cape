@@ -12,12 +12,17 @@ public:
     void SetUri(std::string uri);
     void Start();
     void Stop();
-    static void PostMethod(const web::http::http_request& request);
-    static void PutMethod(const web::http::http_request& request);
+    void PostMethod(const web::http::http_request& request);
+    void PutMethod(const web::http::http_request& request);
+
+private :
+    void Initialize();
 
 private :
     web::uri_builder* uri_;
     web::http::experimental::listener::http_listener *listener_;
+    std::map<std::string, std::vector<int>> program_pids_;
+    std::map<std::string, std::string> program_exe_path_;
 };
 
 #endif //DOG_RESTDOG_H

@@ -5,27 +5,27 @@
 #include "DogLog.h"
 #include "RestDog.h"
 
-StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
+pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
     dog::cout << dog::time << "正在启动进程 [" << args_vec[0] << "] ..." << dog::endl;
 
     if(args_vec.empty())
     {
         dog::cout << dog::time << "[Error]: 启动参数为空!!!" << dog::endl;
-        return START_FAILED;
+        return -1;
     }
 
     if (access(args_vec[0].c_str(), F_OK) != 0)
     {
         dog::cout << dog::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << dog::endl;
-        return START_FAILED;
+        return -1;
     }
 
     pid_t pid = fork();
     if(pid < 0)
     {
         dog::cout << dog::time << "[Error]: 启动时创建进程失败!!!" << dog::endl;
-        return START_FAILED;
+        return -1;
     }
 
     if(pid == 0)
@@ -50,7 +50,7 @@ StartStatus WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         kill(getpid(), SIGKILL);
     }
 
-    return START_SUCCESS;
+    return pid;
 }
 
 std::vector<int> WorkFlow::CheckProgram(const std::string& name)
@@ -81,27 +81,37 @@ std::vector<int> WorkFlow::CheckProgram(const std::string& name)
     return ret;
 }
 
-StopStatus WorkFlow::StopProgram(std::string name)
+StopStatus WorkFlow::StopProgram(const std::string& name, const std::vector<int>& pids)
 {
-    std::string command = "pkill -9 ";
-    command += name;
     dog::cout << dog::time << "正在停止进程 [" << name << "] ..." << dog::endl;
+    int status;             ///< 子进程退出状态
+    for (auto it : pids)
+    {
+        kill(-getsid(it), SIGKILL);
+        waitpid(it, &status, 0);
+    }
 
-    if (system(command.c_str()) == 0)
+    std::vector<int> left = CheckProgram(name);
+    if(left.empty())
     {
         dog::cout << dog::time << "进程 [" << name << "] 成功杀死." << dog::endl;
         return STOP_SUCCESS;
     }
     else
     {
-        std::vector<int> left = CheckProgram(name);
-        if(!left.empty())
+        std::string command = "pkill -9 ";
+        command += name;
+
+        system(command.c_str());
+
+        left = CheckProgram(name);
+        if(left.empty())
         {
-            dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
-            return STOP_FAILED;
+            dog::cout << dog::time << "进程 [" << name << "] 成功杀死." << dog::endl;
+            return STOP_SUCCESS;
         }
 
-        dog::cout << dog::time << "进程 [" << name << "] 不存在." << dog::endl;
-        return STOP_SUCCESS;
+        dog::cout << dog::time << "无法杀死 [" << name << "]" << dog::endl;
+        return STOP_FAILED;
     }
 }

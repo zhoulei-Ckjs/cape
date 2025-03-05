@@ -7,298 +7,67 @@
 void RestDog::PostMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
+    auto paths = web::uri::split_path(request.relative_uri().path());
+
+    /// 命令错误检查
+    if(paths.size() != 2)
+    {
+        std::stringstream wss;
+        wss << "未定义方法：" << path.c_str();
+        request.reply(web::http::status_codes::NotImplemented, wss.str());
+        dog::cout << dog::time << wss.str() << dog::endl;
+        return;
+    }
+    std::string command = paths.front();
+    std::string program = paths.back();
+    dog::cout << dog::time << "[" << command << " " << program << "]" << dog::endl;
+    if(command != "start" && command != "check" && command != "stop")
+    {
+        request.reply(web::http::status_codes::NotImplemented, "未知命令：" + command);
+        dog::cout << dog::time << "未知命令：" << command << dog::endl;
+        return;
+    }
+    if(program_exe_path_.find(program) == program_exe_path_.end())
+    {
+        request.reply(web::http::status_codes::NotImplemented, "未知程序：" + command);
+        dog::cout << dog::time << "未知程序：" << command << dog::endl;
+        return;
+    }
 
     std::vector<std::string> args;
     char replay_buf[64];
-    if(path == "/start/test")
+    if(command == "start")
     {
-        dog::cout << dog::time << "[start test]" << dog::endl;
-        args.push_back("/root/dog/cmake-build-debug/test/test");
+        args.push_back(program_exe_path_[program]);
+        pid_t pid_son = WorkFlow::StartProgram(args);
+        program_pids_[program].push_back(pid_son);
 
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
+        if(pid_son != -1)
             request.reply(web::http::status_codes::OK, "启动成功!");
         else
             request.reply(web::http::status_codes::InternalError, "启动失败!");
     }
-    else if(path == "/stop/test")
+    else if(command == "check")
     {
-        dog::cout << dog::time << "[stop test]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("test");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if (path == "/start/odsp")
-    {
-        dog::cout << dog::time << "[start odsp]" << dog::endl;
-        args.push_back("/home/hongshan/ODSP/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/ret")
-    {
-        dog::cout << dog::time << "[start ret]" << dog::endl;
-        args.push_back("/home/hongshan/RET/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/event_transfer")
-    {
-        dog::cout << dog::time << "[start event_transfer]" << dog::endl;
-        args.push_back("/home/hongshan/BEDD_TRANSFER/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/event_repository")
-    {
-        dog::cout << dog::time << "[start event_repository]" << dog::endl;
-        args.push_back("/home/hongshan/BEDD/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/rts")
-    {
-        dog::cout << dog::time << "[start rts]" << dog::endl;
-        args.push_back("/home/hongshan/RTS/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/wovt")
-    {
-        dog::cout << dog::time << "[start wovt]" << dog::endl;
-        args.push_back("/home/hongshan/WOVT/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/logon")
-    {
-        dog::cout << dog::time << "[start logon]" << dog::endl;
-        args.push_back("/home/hongshan/LOGON/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if(path == "/start/uuas")
-    {
-        dog::cout << dog::time << "[start uuas]" << dog::endl;
-        args.push_back("/home/hongshan/UUAS/start.sh");
-
-        StartStatus status = WorkFlow::StartProgram(args);
-        if(status == StartStatus::START_SUCCESS)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
-    }
-    else if (path == "/stop/odsp")
-    {
-        dog::cout << dog::time << "[stop odsp]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("odsp");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/ret")
-    {
-        dog::cout << dog::time << "[stop ret]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("ret");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/event_transfer")
-    {
-        dog::cout << dog::time << "[stop event_transfer]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("event_transfer");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/event_repository")
-    {
-        dog::cout << dog::time << "[stop event_repository]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("event_repository");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/rts")
-    {
-        dog::cout << dog::time << "[stop rts]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("rts");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/wovt")
-    {
-        dog::cout << dog::time << "[stop wovt]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("wovt");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/logon")
-    {
-        dog::cout << dog::time << "[stop logon]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("logon");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if(path == "/stop/uuas")
-    {
-        dog::cout << dog::time << "[stop uuas]" << dog::endl;
-
-        StopStatus status = WorkFlow::StopProgram("uuas");
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
-    }
-    else if (path == "/check/odsp")
-    {
-        dog::cout << dog::time << "[check odsp]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("odsp");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "odsp");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "odsp", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/ret")
-    {
-        dog::cout << dog::time << "[check ret]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("ret");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "ret");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "ret", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/event_transfer")
-    {
-        dog::cout << dog::time << "[check event_transfer]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("event_transfer");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "event_transfer");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "event_transfer", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/event_repository")
-    {
-        dog::cout << dog::time << "[check event_repository]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("event_repository");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "event_repository");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "event_repository", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/rts")
-    {
-        dog::cout << dog::time << "[check rts]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("rts");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "rts");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "rts", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/wovt")
-    {
-        dog::cout << dog::time << "[check wovt]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("wovt");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "wovt");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "wovt", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
-    }
-    else if(path == "/check/logon")
-    {
-        dog::cout << dog::time << "[check logon]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("logon");
-
+        std::vector<int> processes = WorkFlow::CheckProgram(program);
         if(processes.empty())
             snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "logon");
         else
             snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "logon", processes.size());
         request.reply(web::http::status_codes::OK, replay_buf);
     }
-    else if(path == "/check/uuas")
+    else if(command == "stop")
     {
-        dog::cout << dog::time << "[check uuas]" << dog::endl;
-
-        std::vector<int> processes = WorkFlow::CheckProgram("uuas");
-
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "uuas");
+        StopStatus status = WorkFlow::StopProgram(program, program_pids_[program]);
+        if(status == STOP_SUCCESS)
+            request.reply(web::http::status_codes::OK, "停止成功!");
         else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "uuas", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
+            request.reply(web::http::status_codes::InternalError, "停止失败!");
     }
-    else
+    else        ///< 不该出现，前面已经做了非 start、check、stop 判断。
     {
-        request.reply(web::http::status_codes::NotImplemented, "未知指令：" + path);
-        dog::cout << dog::time << "未知指令：" << path << dog::endl;
+        request.reply(web::http::status_codes::InternalError, "内部逻辑错误");
+        dog::cout << dog::time << "内部逻辑错误" << dog::endl;
     }
 }
 
@@ -318,7 +87,6 @@ void RestDog::PutMethod(const web::http::http_request& request)
 
     std::string file_name = paths.back();   ///< 获取文件名字
 
-    dog::cout << dog::time << "[upload file]" << dog::endl;
     dog::cout << dog::time << "[Accepting file " << file_name << "]" << dog::endl;
     auto fileStream = std::make_shared<concurrency::streams::ostream>();
     /// 异步打开文件流
@@ -356,6 +124,31 @@ void RestDog::PutMethod(const web::http::http_request& request)
     );
 }
 
+void RestDog::Initialize()
+{
+    /// 进程 pid
+    program_pids_.insert({"test", std::vector<int>()});
+    program_pids_.insert({"odsp", std::vector<int>()});
+    program_pids_.insert({"ret", std::vector<int>()});
+    program_pids_.insert({"event_transfer", std::vector<int>()});
+    program_pids_.insert({"event_repository", std::vector<int>()});
+    program_pids_.insert({"rts", std::vector<int>()});
+    program_pids_.insert({"wovt", std::vector<int>()});
+    program_pids_.insert({"logon", std::vector<int>()});
+    program_pids_.insert({"uuas", std::vector<int>()});
+
+    /// 进程路径
+    program_exe_path_.insert({"test", "/root/dog/cmake-build-debug/test/test"});
+    program_exe_path_.insert({"odsp", "/home/hongshan/ODSP/start.sh"});
+    program_exe_path_.insert({"ret", "/home/hongshan/RET/start.sh"});
+    program_exe_path_.insert({"event_transfer", "/home/hongshan/BEDD_TRANSFER/start.sh"});
+    program_exe_path_.insert({"event_repository", "/home/hongshan/BEDD/start.sh"});
+    program_exe_path_.insert({"rts", "/home/hongshan/RTS/start.sh"});
+    program_exe_path_.insert({"wovt", "/home/hongshan/WOVT/start.sh"});
+    program_exe_path_.insert({"logon", "/home/hongshan/LOGON/start.sh"});
+    program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
+}
+
 void RestDog::SetUri(std::string uri)
 {
     uri_ = new web::uri_builder(U(uri));
@@ -365,8 +158,12 @@ void RestDog::SetUri(std::string uri)
 
 void RestDog::Start()
 {
-    listener_->support(web::http::methods::POST, PostMethod);
-    listener_->support(web::http::methods::PUT, PutMethod);
+    Initialize();
+
+    auto post_method = std::bind(&RestDog::PostMethod, this, std::placeholders::_1);
+    auto put_method = std::bind(&RestDog::PutMethod, this, std::placeholders::_1);
+    listener_->support(web::http::methods::POST, post_method);
+    listener_->support(web::http::methods::PUT, put_method);
 
     try
     {
