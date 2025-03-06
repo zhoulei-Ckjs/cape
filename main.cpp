@@ -18,7 +18,7 @@ int main()
 
     RestWatcher rest_watcher;
     rest_watcher.Initialize();
-//    rest_watcher.RaiseDog();
+    rest_watcher.RaiseDog();
     rest_watcher.SetUri("http://0.0.0.0:8888");
     rest_watcher.Start();
 

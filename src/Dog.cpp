@@ -7,11 +7,12 @@
 #include "Log.h"
 #include "Common.h"
 
+int Dog::msgid = -1;
 
 void Dog::Run()
 {
     key_t key = ftok("msg_queue", 65);  // 获取相同的键
-    int msgid = msgget(key, 0666 | IPC_CREAT);  // 获取消息队列 ID
+    msgid = msgget(key, 0666 | IPC_CREAT);  // 获取消息队列 ID
 
     if (msgid == -1)
     {
@@ -29,8 +30,8 @@ void Dog::Run()
         }
         else
         {
-            cape::cout << cape::time << "[Dog]: 收到消息: {\n\ttype : " << whistle.command_type_
-            << "\n\ttext : " << whistle.text << "\n}" << cape::endl;
+            cape::cout << cape::time << "[Dog]: 收到消息: {type: " << whistle.command_type_
+            << ", text: " << whistle.text << "}" << cape::endl;
         }
     }
 

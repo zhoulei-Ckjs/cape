@@ -12,7 +12,6 @@
 #include "WorkFlow.h"
 #include "Log.h"
 #include "Dog.h"
-#include "Common.h"
 
 void RestWatcher::PostMethod(const web::http::http_request& request)
 {
@@ -49,30 +48,38 @@ void RestWatcher::PostMethod(const web::http::http_request& request)
     if(command == "start")
     {
         args.push_back(program_exe_path_[program]);
-        pid_t pid_son = WorkFlow::StartProgram(args);
-        program_pids_[program].push_back(pid_son);
+//        pid_t pid_son = WorkFlow::StartProgram(args);
+//        program_pids_[program].push_back(pid_son);
 
-        if(pid_son != -1)
-            request.reply(web::http::status_codes::OK, "启动成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "启动失败!");
+//        if(pid_son != -1)
+//            request.reply(web::http::status_codes::OK, "启动成功!");
+//        else
+//            request.reply(web::http::status_codes::InternalError, "启动失败!");
+        IssueCommand(CommandType::START, program.c_str());
+        request.reply(web::http::status_codes::OK, "启动成功!");
     }
     else if(command == "check")
     {
-        std::vector<int> processes = WorkFlow::CheckProgram(program);
-        if(processes.empty())
-            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "logon");
-        else
-            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "logon", processes.size());
-        request.reply(web::http::status_codes::OK, replay_buf);
+//        std::vector<int> processes = WorkFlow::CheckProgram(program);
+//        if(processes.empty())
+//            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "logon");
+//        else
+//            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "logon", processes.size());
+//        request.reply(web::http::status_codes::OK, replay_buf);
+
+        IssueCommand(CommandType::CHECK, program.c_str());
+        request.reply(web::http::status_codes::OK, "启动成功!");
     }
     else if(command == "stop")
     {
-        StopStatus status = WorkFlow::StopProgram(program, program_pids_[program]);
-        if(status == STOP_SUCCESS)
-            request.reply(web::http::status_codes::OK, "停止成功!");
-        else
-            request.reply(web::http::status_codes::InternalError, "停止失败!");
+//        StopStatus status = WorkFlow::StopProgram(program, program_pids_[program]);
+//        if(status == STOP_SUCCESS)
+//            request.reply(web::http::status_codes::OK, "停止成功!");
+//        else
+//            request.reply(web::http::status_codes::InternalError, "停止失败!");
+
+        IssueCommand(CommandType::STOP, program.c_str());
+        request.reply(web::http::status_codes::OK, "启动成功!");
     }
     else        ///< 不该出现，前面已经做了非 start、check、stop 判断。
     {
@@ -164,7 +171,7 @@ void RestWatcher::Initialize()
 int RestWatcher::CreateWhistle()
 {
     key_t key = ftok("whistle", 65);
-    int msgid = msgget(key, 0666 | IPC_CREAT);
+    msgid = msgget(key, 0666 | IPC_CREAT);
 
     if (msgid == -1)
     {
@@ -172,10 +179,15 @@ int RestWatcher::CreateWhistle()
         return -1;
     }
 
+    return 0;
+}
+
+int RestWatcher::IssueCommand(CommandType command_type, const char* message)
+{
     Whistle whistle;
     whistle.type = 1;                                         ///< 设置消息类型
-    whistle.command_type_ = CommandType::START;
-    strcpy(whistle.text, "Hello from sender!");     ///< 设置消息内容
+    whistle.command_type_ = command_type;
+    strcpy(whistle.text, message);                  ///< 设置消息内容
 
     if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)
     {
@@ -183,7 +195,8 @@ int RestWatcher::CreateWhistle()
         return -1;
     }
 
-    cape::cout << cape::time << "[watcher]: 发送消息: " << whistle.text << cape::endl;
+    cape::cout << cape::time << "[watcher]: 发送消息: {type: " << command_type << ", text: "
+        << whistle.text << "}" << cape::endl;
     return 0;
 }
 

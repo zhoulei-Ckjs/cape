@@ -5,6 +5,9 @@ class Dog
 {
 public :
     static void Run();
+
+public :
+    static int msgid;
 };
 
 #endif //DOG_DOG_H
