@@ -1,21 +1,45 @@
 #include <unistd.h>
 #include <sys/wait.h>
+#include <iostream>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
 
 #include "Dog.h"
 #include "Log.h"
 
 
-void Dog::Initialize()
+void Dog::Run()
 {
-    pid_t pid = fork();
-    if(pid < 0)
+    key_t key = ftok("msg_queue", 65);  // 获取相同的键
+    int msgid = msgget(key, 0666 | IPC_CREAT);  // 获取消息队列 ID
+
+    if (msgid == -1)
     {
-        cape::cout << cape::time << "[Error]: 创建 Dog 进程失败!!!" << cape::endl;
-        exit(0);
+        cape::cout << cape::time << "[Dog]: 消息队列创建失败!" << cape::endl;
+        kill(-getsid(getpid()), SIGKILL);
     }
 
-    if(pid == 0)
-    {
+    struct Whistle whistle;
 
+    while(true)
+    {
+        if (msgrcv(msgid, &whistle, sizeof(whistle), 1, 0) == -1)
+        {
+            cape::cout << cape::time << "[Dog]: 消息队列接收失败!" << cape::endl;
+        }
+        else
+        {
+            cape::cout << cape::time << "[Dog]: 收到消息: " << whistle.text << cape::endl;
+        }
+    }
+
+    /// 删除消息队列
+    if (msgctl(msgid, IPC_RMID, nullptr) == -1)
+    {
+        cape::cout << "[Dog]: 删除消息队列失败!" << cape::endl;
     }
 }

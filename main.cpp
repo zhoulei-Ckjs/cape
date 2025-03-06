@@ -3,20 +3,21 @@
 #include "Log.h"
 #include "Common.h"
 
-void Startcape()
+void StartCape()
 {
     cape::cout << cape::endl;
     cape::cout << "*********************************************" << cape::endl;
-    cape::cout << "               Mad cape Started               " << cape::endl;
+    cape::cout << "            watcher start working            " << cape::endl;
     cape::cout << "*********************************************" << cape::endl;
 }
 
 int main()
 {
     cape::cout.Open("cape.log");
-    Startcape();
+    StartCape();
 
     RestWatcher rest_watcher;
+    rest_watcher.RaiseDog();
     rest_watcher.SetUri("http://0.0.0.0:8888");
     rest_watcher.Start();
 

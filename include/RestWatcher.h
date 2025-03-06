@@ -9,6 +9,7 @@ class RestWatcher
 {
 public:
     friend class WorkFlow;
+    void RaiseDog();
     void SetUri(std::string uri);
     void Start();
     void Stop();
@@ -17,6 +18,13 @@ public:
 
 private :
     void Initialize();
+    /**
+     * @brief 创建消息队列
+     * @return 创建状态
+     * @retval 0 创建成功
+     * @retval -1 创建失败
+     */
+    int CreateWhistle();
 
 private :
     web::uri_builder* uri_;

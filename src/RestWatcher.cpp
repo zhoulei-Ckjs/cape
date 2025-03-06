@@ -3,6 +3,7 @@
 #include "RestWatcher.h"
 #include "WorkFlow.h"
 #include "Log.h"
+#include "Dog.h"
 
 void RestWatcher::PostMethod(const web::http::http_request& request)
 {
@@ -147,6 +148,55 @@ void RestWatcher::Initialize()
     program_exe_path_.insert({"wovt", "/home/hongshan/WOVT/start.sh"});
     program_exe_path_.insert({"logon", "/home/hongshan/LOGON/start.sh"});
     program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
+}
+
+#include <iostream>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+
+int RestWatcher::CreateWhistle()
+{
+    key_t key = ftok("whistle", 65);
+    int msgid = msgget(key, 0666 | IPC_CREAT);
+
+    if (msgid == -1)
+    {
+        cape::cout << cape::time << "创建消息队列失败!" << cape::endl;
+        return -1;
+    }
+
+    struct Whistle whistle;
+    whistle.type = 1;  // 设置消息类型
+    strcpy(whistle.text, "Hello from sender!");  // 设置消息内容
+
+    if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1) {
+        cape::cout << cape::time << "[watcher]: 消息发送失败!" << cape::endl;
+        return -1;
+    }
+
+    cape::cout << cape::time << "[watcher]: 发送消息: " << whistle.text << cape::endl;
+    return 0;
+}
+
+void RestWatcher::RaiseDog()
+{
+    pid_t pid = fork();
+    if(pid < 0)
+    {
+        cape::cout << cape::time << "[Error]: 创建 Dog 进程失败!!!" << cape::endl;
+        exit(0);
+    }
+
+    if(pid == 0)
+    {
+        Dog::Run();
+    }
+
+    CreateWhistle();
 }
 
 void RestWatcher::SetUri(std::string uri)
