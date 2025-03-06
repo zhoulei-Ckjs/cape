@@ -23,7 +23,7 @@ void Dog::Run()
         kill(-getsid(getpid()), SIGKILL);
     }
 
-    struct Whistle whistle;
+    Whistle whistle;
 
     while(true)
     {
