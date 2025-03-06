@@ -146,6 +146,7 @@ void RestWatcher::Initialize()
     program_pids_.insert({"wovt", std::vector<int>()});
     program_pids_.insert({"logon", std::vector<int>()});
     program_pids_.insert({"uuas", std::vector<int>()});
+    program_pids_.insert({"wme", std::vector<int>()});
 
     /// 进程路径
     program_exe_path_.insert({"test", "/root/cape/cmake-build-debug/test/test"});
@@ -157,6 +158,7 @@ void RestWatcher::Initialize()
     program_exe_path_.insert({"wovt", "/home/hongshan/WOVT/start.sh"});
     program_exe_path_.insert({"logon", "/home/hongshan/LOGON/start.sh"});
     program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
+    program_exe_path_.insert({"wme", "/home/hongshan/WME/start.sh"});
 }
 
 int RestWatcher::CreateWhistle()
