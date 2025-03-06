@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <cstring>
@@ -13,6 +12,7 @@
 #include "WorkFlow.h"
 #include "Log.h"
 #include "Dog.h"
+#include "Common.h"
 
 void RestWatcher::PostMethod(const web::http::http_request& request)
 {
@@ -173,7 +173,7 @@ int RestWatcher::CreateWhistle()
     }
 
     Whistle whistle;
-    whistle.type = 1;                                       ///< 设置消息类型
+    whistle.type = 1;                                         ///< 设置消息类型
     strcpy(whistle.text, "Hello from sender!");     ///< 设置消息内容
 
     if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)
@@ -212,8 +212,6 @@ void RestWatcher::SetUri(std::string uri)
 
 void RestWatcher::Start()
 {
-    Initialize();
-
     auto post_method = std::bind(&RestWatcher::PostMethod, this, std::placeholders::_1);
     auto put_method = std::bind(&RestWatcher::PutMethod, this, std::placeholders::_1);
     listener_->support(web::http::methods::POST, post_method);

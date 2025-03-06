@@ -1,15 +1,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
-#include <iostream>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-#include <cstring>
-#include <cstdlib>
-#include <unistd.h>
 
 #include "Dog.h"
 #include "Log.h"
+#include "Common.h"
 
 
 void Dog::Run()

@@ -9,6 +9,7 @@ class RestWatcher
 {
 public:
     friend class WorkFlow;
+    void Initialize();
     void RaiseDog();
     void SetUri(std::string uri);
     void Start();
@@ -17,7 +18,7 @@ public:
     void PutMethod(const web::http::http_request& request);
 
 private :
-    void Initialize();
+
     /**
      * @brief 创建消息队列
      * @return 创建状态
