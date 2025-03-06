@@ -1,3 +1,12 @@
+#include <iostream>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+#include <string>
+
 #include <cpprest/filestream.h>
 
 #include "RestWatcher.h"
@@ -150,14 +159,6 @@ void RestWatcher::Initialize()
     program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
 }
 
-#include <iostream>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <cstring>
-#include <cstdlib>
-#include <unistd.h>
-
 int RestWatcher::CreateWhistle()
 {
     key_t key = ftok("whistle", 65);
@@ -169,11 +170,12 @@ int RestWatcher::CreateWhistle()
         return -1;
     }
 
-    struct Whistle whistle;
-    whistle.type = 1;  // 设置消息类型
-    strcpy(whistle.text, "Hello from sender!");  // 设置消息内容
+    Whistle whistle;
+    whistle.type = 1;                                       ///< 设置消息类型
+    strcpy(whistle.text, "Hello from sender!");     ///< 设置消息内容
 
-    if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1) {
+    if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)
+    {
         cape::cout << cape::time << "[watcher]: 消息发送失败!" << cape::endl;
         return -1;
     }
