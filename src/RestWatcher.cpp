@@ -174,6 +174,7 @@ int RestWatcher::CreateWhistle()
 
     Whistle whistle;
     whistle.type = 1;                                         ///< 设置消息类型
+    whistle.command_type_ = CommandType::START;
     strcpy(whistle.text, "Hello from sender!");     ///< 设置消息内容
 
     if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)

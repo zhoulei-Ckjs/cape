@@ -29,7 +29,8 @@ void Dog::Run()
         }
         else
         {
-            cape::cout << cape::time << "[Dog]: 收到消息: " << whistle.text << cape::endl;
+            cape::cout << cape::time << "[Dog]: 收到消息: {\n\ttype : " << whistle.command_type_
+            << "\n\ttext : " << whistle.text << "\n}" << cape::endl;
         }
     }
 
