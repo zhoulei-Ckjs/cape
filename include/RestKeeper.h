@@ -29,7 +29,7 @@ private :
      * @retval 0 创建成功
      * @retval -1 创建失败
      */
-    int CreateWhistle();
+    int CreateWhistleAndBark();
 
     /**
      * @brief 发送命令给 Dog
@@ -41,6 +41,11 @@ private :
      */
     int IssueCommand(CommandType command_type, const char* message);
 
+    /**
+     * @brief 收取任务完成状态
+     */
+    void ReceiveBark();
+
 public :
     std::atomic<int> whistle_unique_id_;
 
@@ -49,7 +54,11 @@ private :
     web::http::experimental::listener::http_listener *listener_;
     std::map<std::string, std::vector<int>> program_pids_;
     std::map<std::string, std::string> program_exe_path_;
-    int msgid = -1;         ///< 消息队列ID
+    int whistle_msg_id_ = -1;                   ///< 消息发送队列 id
+    int bark_msg_id_ = -1;                      ///< 消息回复队列 id
+
+    std::map<int, Bark> whistle_reply_map_;     ///< 存放 whistle 回复消息的 map
+    std::mutex whistle_reply_map_mutex_;
 };
 
 #endif

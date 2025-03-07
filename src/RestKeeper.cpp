@@ -173,14 +173,23 @@ void RestKeeper::Initialize()
     program_exe_path_.insert({"wme", "/home/hongshan/WME/start.sh"});
 }
 
-int RestKeeper::CreateWhistle()
+int RestKeeper::CreateWhistleAndBark()
 {
     key_t key = ftok("whistle", 65);
-    msgid = msgget(key, 0666 | IPC_CREAT);
+    whistle_msg_id_ = msgget(key, 0666 | IPC_CREAT);
 
-    if (msgid == -1)
+    if (whistle_msg_id_ == -1)
     {
-        cape::cout << cape::time << "创建消息队列失败!" << cape::endl;
+        cape::cout << cape::time << "创建消息队列 whistle 失败!" << cape::endl;
+        return -1;
+    }
+
+    key = ftok("bark", 66);
+    bark_msg_id_ = msgget(key, 0666 | IPC_CREAT);
+
+    if (bark_msg_id_ == -1)
+    {
+        cape::cout << cape::time << "创建消息队列 bark 失败!" << cape::endl;
         return -1;
     }
 
@@ -195,7 +204,7 @@ int RestKeeper::IssueCommand(CommandType command_type, const char* message)
     whistle.unique_id_ = ++whistle_unique_id_;                ///< 指令唯一ID
     strcpy(whistle.text, message);                  ///< 设置消息内容
 
-    if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)
+    if (msgsnd(whistle_msg_id_, &whistle, sizeof(whistle), 0) == -1)
     {
         cape::cout << cape::time << "消息发送失败!" << cape::endl;
         return -1;
@@ -204,6 +213,12 @@ int RestKeeper::IssueCommand(CommandType command_type, const char* message)
     cape::cout << cape::time << "[" << whistle.unique_id_ << " " <<
         cape::get_enum_name(command_type) << " " << whistle.text << "]" << cape::endl;
     return 0;
+}
+
+void RestKeeper::ReceiveBark()
+{
+    std::lock_guard<std::mutex> guard(whistle_reply_map_mutex_);
+
 }
 
 void RestKeeper::RaiseDog()
@@ -222,7 +237,8 @@ void RestKeeper::RaiseDog()
         Dog::Run();
     }
 
-    CreateWhistle();
+    if(CreateWhistleAndBark() == -1)
+        exit(0);
 }
 
 void RestKeeper::SetUri(std::string uri)

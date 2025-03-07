@@ -6,8 +6,12 @@ class Dog
 public :
     static void Run();
 
+private :
+    static void CreateWhistleAndBark();
+
 public :
-    static int msgid;
+    static int whistle_msg_id_;
+    static int bark_msg_id_;
 };
 
 #endif //DOG_DOG_H
