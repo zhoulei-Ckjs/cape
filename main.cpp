@@ -24,7 +24,7 @@ int main()
 
     while(!stop_flag)
     {
-        sleep(1);
+        rest_keeper.ReceiveBark();
     }
 
     rest_keeper.Stop();

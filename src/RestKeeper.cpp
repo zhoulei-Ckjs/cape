@@ -219,6 +219,16 @@ void RestKeeper::ReceiveBark()
 {
     std::lock_guard<std::mutex> guard(whistle_reply_map_mutex_);
 
+    Bark bark;
+    if (msgrcv(bark_msg_id_, &bark, sizeof(bark), 1, 0) == -1)
+    {
+        cape::cout << cape::time << "消息队列接收失败!" << cape::endl;
+    }
+    else
+    {
+        cape::cout << cape::time << "--> [" << bark.unique_id_ << " " <<
+            cape::get_enum_name(bark.status_) << "]" << cape::endl;
+    }
 }
 
 void RestKeeper::RaiseDog()

@@ -21,6 +21,11 @@ public:
     void PostMethod(const web::http::http_request& request);
     void PutMethod(const web::http::http_request& request);
 
+    /**
+     * @brief 收取任务完成状态
+     */
+    void ReceiveBark();
+
 private :
 
     /**
@@ -40,11 +45,6 @@ private :
      * @retval 0 发送成功
      */
     int IssueCommand(CommandType command_type, const char* message);
-
-    /**
-     * @brief 收取任务完成状态
-     */
-    void ReceiveBark();
 
 public :
     std::atomic<int> whistle_unique_id_;
