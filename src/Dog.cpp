@@ -27,22 +27,7 @@ void Dog::Run()
         {
             cape::cout << cape::time << "[" << whistle.unique_id_ << " " <<
                 cape::get_enum_name(whistle.command_type_) << " " << whistle.text << "]" << cape::endl;
-
-
-            Bark bark;
-            bark.type = 1;                                       ///< 设置消息类型
-            bark.unique_id_ = whistle.unique_id_;                ///< 指令唯一ID
-            bark.status_ = TaskCompletionStatus::SUCCESS;        ///< 设置状态
-
-            if (msgsnd(bark_msg_id_, &bark, sizeof(bark), 0) == -1)
-            {
-                cape::cout << cape::time << "消息发送失败!" << cape::endl;
-            }
-            else
-            {
-                cape::cout << cape::time << "<-- [" << bark.unique_id_ << " " <<
-                    cape::get_enum_name(bark.status_) << "]" << cape::endl;
-            }
+            IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS);
         }
     }
 
@@ -72,5 +57,23 @@ void Dog::CreateWhistleAndBark()
     {
         cape::cout << cape::time << "创建消息队列 bark 失败!" << cape::endl;
         kill(-getsid(getpid()), SIGKILL);
+    }
+}
+
+void Dog::IssueBark(int unique_id, TaskCompletionStatus status)
+{
+    Bark bark;
+    bark.type = 1;                                       ///< 设置消息类型
+    bark.unique_id_ = unique_id;                         ///< 指令唯一ID
+    bark.status_ = status;                               ///< 设置状态
+
+    if (msgsnd(bark_msg_id_, &bark, sizeof(bark), 0) == -1)
+    {
+        cape::cout << cape::time << "消息发送失败!" << cape::endl;
+    }
+    else
+    {
+        cape::cout << cape::time << "<-- [" << bark.unique_id_ << " " <<
+            cape::get_enum_name(bark.status_) << "]" << cape::endl;
     }
 }

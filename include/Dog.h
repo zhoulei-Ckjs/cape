@@ -1,6 +1,8 @@
 #ifndef DOG_DOG_H
 #define DOG_DOG_H
 
+#include "Common.h"
+
 class Dog
 {
 public :
@@ -8,6 +10,7 @@ public :
 
 private :
     static void CreateWhistleAndBark();
+    static void IssueBark(int unique_id, TaskCompletionStatus status);
 
 public :
     static int whistle_msg_id_;
