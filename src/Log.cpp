@@ -16,4 +16,10 @@ namespace cape
             return OPEN_SUCCESS;
         return OPEN_FAILURE;
     }
+
+    void Log::Close()
+    {
+        if(dog_log.is_open())
+            dog_log.close();
+    }
 }

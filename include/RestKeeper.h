@@ -1,5 +1,5 @@
-#ifndef DOG_RESTWATCHER_H
-#define DOG_RESTWATCHER_H
+#ifndef DOG_RESTKEEPER_H
+#define DOG_RESTKEEPER_H
 
 #include <cpprest/uri_builder.h>
 #include <cpprest/http_listener.h>
@@ -7,7 +7,7 @@
 
 #include "Common.h"
 
-class RestWatcher
+class RestKeeper
 {
 public:
     friend class WorkFlow;

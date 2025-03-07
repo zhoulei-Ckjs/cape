@@ -25,6 +25,7 @@ namespace cape
          * @return 打开状态
          */
         OpenStatus Open(char* file_name);
+        void Close();
 
         template<class T>
         Log& operator<<(const T& message)

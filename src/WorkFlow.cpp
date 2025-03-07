@@ -3,7 +3,7 @@
 
 #include "WorkFlow.h"
 #include "Log.h"
-#include "RestWatcher.h"
+#include "RestKeeper.h"
 
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {

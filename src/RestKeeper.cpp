@@ -8,12 +8,12 @@
 
 #include <cpprest/filestream.h>
 
-#include "RestWatcher.h"
+#include "RestKeeper.h"
 #include "WorkFlow.h"
 #include "Log.h"
 #include "Dog.h"
 
-void RestWatcher::PostMethod(const web::http::http_request& request)
+void RestKeeper::PostMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
     auto paths = web::uri::split_path(request.relative_uri().path());
@@ -88,7 +88,7 @@ void RestWatcher::PostMethod(const web::http::http_request& request)
     }
 }
 
-void RestWatcher::PutMethod(const web::http::http_request& request)
+void RestKeeper::PutMethod(const web::http::http_request& request)
 {
     auto path = request.relative_uri().path();
     auto paths = web::uri::split_path(request.relative_uri().path());
@@ -141,7 +141,7 @@ void RestWatcher::PutMethod(const web::http::http_request& request)
     );
 }
 
-void RestWatcher::Initialize()
+void RestKeeper::Initialize()
 {
     /// 进程 pid
     program_pids_.insert({"test", std::vector<int>()});
@@ -168,7 +168,7 @@ void RestWatcher::Initialize()
     program_exe_path_.insert({"wme", "/home/hongshan/WME/start.sh"});
 }
 
-int RestWatcher::CreateWhistle()
+int RestKeeper::CreateWhistle()
 {
     key_t key = ftok("whistle", 65);
     msgid = msgget(key, 0666 | IPC_CREAT);
@@ -182,7 +182,7 @@ int RestWatcher::CreateWhistle()
     return 0;
 }
 
-int RestWatcher::IssueCommand(CommandType command_type, const char* message)
+int RestKeeper::IssueCommand(CommandType command_type, const char* message)
 {
     Whistle whistle;
     whistle.type = 1;                                         ///< 设置消息类型
@@ -200,7 +200,7 @@ int RestWatcher::IssueCommand(CommandType command_type, const char* message)
     return 0;
 }
 
-void RestWatcher::RaiseDog()
+void RestKeeper::RaiseDog()
 {
     pid_t pid = fork();
     if(pid < 0)
@@ -217,17 +217,17 @@ void RestWatcher::RaiseDog()
     CreateWhistle();
 }
 
-void RestWatcher::SetUri(std::string uri)
+void RestKeeper::SetUri(std::string uri)
 {
     uri_ = new web::uri_builder(U(uri));
     auto addr = uri_->to_uri();
     listener_ = new web::http::experimental::listener::http_listener(addr);
 }
 
-void RestWatcher::Start()
+void RestKeeper::Start()
 {
-    auto post_method = std::bind(&RestWatcher::PostMethod, this, std::placeholders::_1);
-    auto put_method = std::bind(&RestWatcher::PutMethod, this, std::placeholders::_1);
+    auto post_method = std::bind(&RestKeeper::PostMethod, this, std::placeholders::_1);
+    auto put_method = std::bind(&RestKeeper::PutMethod, this, std::placeholders::_1);
     listener_->support(web::http::methods::POST, post_method);
     listener_->support(web::http::methods::PUT, put_method);
 
@@ -243,7 +243,7 @@ void RestWatcher::Start()
     }
 }
 
-void RestWatcher::Stop()
+void RestKeeper::Stop()
 {
     listener_->close().wait();  ///< 等待所有操作完成
 }

@@ -1,5 +1,5 @@
 #include "WorkFlow.h"
-#include "RestWatcher.h"
+#include "RestKeeper.h"
 #include "Log.h"
 #include "Common.h"
 
@@ -16,19 +16,20 @@ int main()
     cape::cout.Open("cape.log");
     StartCape();
 
-    RestWatcher rest_watcher;
-    rest_watcher.Initialize();
-    rest_watcher.RaiseDog();
-    rest_watcher.SetUri("http://0.0.0.0:8888");
-    rest_watcher.Start();
+    RestKeeper rest_keeper;
+    rest_keeper.Initialize();
+    rest_keeper.RaiseDog();
+    rest_keeper.SetUri("http://0.0.0.0:8888");
+    rest_keeper.Start();
 
     while(!stop_flag)
     {
         sleep(1);
     }
 
-    rest_watcher.Stop();
+    rest_keeper.Stop();
     cape::cout << "over main" << cape::endl;
+    cape::cout.Close();
 
     return 0;
 }
