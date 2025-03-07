@@ -215,10 +215,21 @@ int RestKeeper::IssueCommand(CommandType command_type, const char* message)
     return 0;
 }
 
-void RestKeeper::ReceiveBark()
+TaskCompletionStatus RestKeeper::HearBarking(int unique_id)
 {
     std::lock_guard<std::mutex> guard(whistle_reply_map_mutex_);
+    auto it = whistle_reply_map_.find(unique_id);
+    if(it != whistle_reply_map_.end())
+    {
+        TaskCompletionStatus status = it->second.status_;
+        whistle_reply_map_.erase(unique_id);
+        return status;
+    }
+    return TaskCompletionStatus::INVALID;
+}
 
+void RestKeeper::ReceiveBark()
+{
     Bark bark;
     if (msgrcv(bark_msg_id_, &bark, sizeof(bark), 1, 0) == -1)
     {
@@ -228,6 +239,9 @@ void RestKeeper::ReceiveBark()
     {
         cape::cout << cape::time << "--> [" << bark.unique_id_ << " " <<
             cape::get_enum_name(bark.status_) << "]" << cape::endl;
+
+        std::lock_guard<std::mutex> guard(whistle_reply_map_mutex_);
+        whistle_reply_map_.insert({bark.unique_id_, bark});
     }
 }
 

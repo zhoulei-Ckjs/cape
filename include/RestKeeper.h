@@ -46,6 +46,13 @@ private :
      */
     int IssueCommand(CommandType command_type, const char* message);
 
+    /**
+     * @brief 听狗叫
+     * @param unique_id 命令唯一标识
+     * @return 任务完成状态
+     */
+    TaskCompletionStatus HearBarking(int unique_id);
+
 public :
     std::atomic<int> whistle_unique_id_;
 

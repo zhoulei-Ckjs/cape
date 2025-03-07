@@ -21,6 +21,7 @@ typedef struct Whistle
 
 enum TaskCompletionStatus
 {
+    INVALID,
     SUCCESS,
     FAILED
 };
