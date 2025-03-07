@@ -36,6 +36,8 @@ private :
      */
     int CreateWhistleAndBark();
 
+    void PerformTask(int unique_id, CommandType type, const std::string& program, const web::http::http_request& request);
+
     /**
      * @brief 发送命令给 Dog
      * @param command_type 命令类型
@@ -44,7 +46,7 @@ private :
      * @retval -1 发送失败
      * @retval 0 发送成功
      */
-    int IssueCommand(CommandType command_type, const char* message);
+    int IssueCommand(int unique_id, CommandType command_type, const char* message) const;
 
     /**
      * @brief 听狗叫

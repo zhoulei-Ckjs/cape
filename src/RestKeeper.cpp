@@ -43,43 +43,20 @@ void RestKeeper::PostMethod(const web::http::http_request& request)
         return;
     }
 
-    std::vector<std::string> args;
-    char replay_buf[64];
     if(command == "start")
     {
-        args.push_back(program_exe_path_[program]);
-//        pid_t pid_son = WorkFlow::StartProgram(args);
-//        program_pids_[program].push_back(pid_son);
-
-//        if(pid_son != -1)
-//            request.reply(web::http::status_codes::OK, "启动成功!");
-//        else
-//            request.reply(web::http::status_codes::InternalError, "启动失败!");
-        IssueCommand(CommandType::START, program.c_str());
-        request.reply(web::http::status_codes::OK, "启动成功!");
+        int unique_id = ++whistle_unique_id_;
+        PerformTask(unique_id, CommandType::START, program, request);
     }
     else if(command == "check")
     {
-//        std::vector<int> processes = WorkFlow::CheckProgram(program);
-//        if(processes.empty())
-//            snprintf(replay_buf, sizeof replay_buf, "[%s]未运行！", "logon");
-//        else
-//            snprintf(replay_buf, sizeof replay_buf, "当前[%s]正在运行，且存在 %ld 个实例！", "logon", processes.size());
-//        request.reply(web::http::status_codes::OK, replay_buf);
-
-        IssueCommand(CommandType::CHECK, program.c_str());
-        request.reply(web::http::status_codes::OK, "启动成功!");
+        int unique_id = ++whistle_unique_id_;
+        PerformTask(unique_id, CommandType::CHECK, program, request);
     }
     else if(command == "stop")
     {
-//        StopStatus status = WorkFlow::StopProgram(program, program_pids_[program]);
-//        if(status == STOP_SUCCESS)
-//            request.reply(web::http::status_codes::OK, "停止成功!");
-//        else
-//            request.reply(web::http::status_codes::InternalError, "停止失败!");
-
-        IssueCommand(CommandType::STOP, program.c_str());
-        request.reply(web::http::status_codes::OK, "启动成功!");
+        int unique_id = ++whistle_unique_id_;
+        PerformTask(unique_id, CommandType::STOP, program, request);
     }
     else        ///< 不该出现，前面已经做了非 start、check、stop 判断。
     {
@@ -173,6 +150,33 @@ void RestKeeper::Initialize()
     program_exe_path_.insert({"wme", "/home/hongshan/WME/start.sh"});
 }
 
+void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string& program, const web::http::http_request& request)
+{
+    IssueCommand(unique_id, type, program.c_str());
+    TaskCompletionStatus reply_status = TaskCompletionStatus::INVALID;
+    for(int i = 0; i < 3000; i++)
+    {
+        reply_status = HearBarking(unique_id);
+        if(reply_status != TaskCompletionStatus::INVALID)
+            break;
+        usleep(1000);
+    }
+    switch (reply_status)
+    {
+        case TaskCompletionStatus::INVALID:
+            request.reply(web::http::status_codes::RequestTimeout, "启动超时，请检查服务器状态!");
+            break;
+        case TaskCompletionStatus::SUCCESS:
+            request.reply(web::http::status_codes::OK, "启动成功!");
+            break;
+        case TaskCompletionStatus::FAILED:
+            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+            break;
+        default:
+            break;
+    }
+}
+
 int RestKeeper::CreateWhistleAndBark()
 {
     key_t key = ftok("whistle", 65);
@@ -196,12 +200,12 @@ int RestKeeper::CreateWhistleAndBark()
     return 0;
 }
 
-int RestKeeper::IssueCommand(CommandType command_type, const char* message)
+int RestKeeper::IssueCommand(int unique_id, CommandType command_type, const char* message) const
 {
     Whistle whistle;
     whistle.type = 1;                                         ///< 设置消息类型
     whistle.command_type_ = command_type;
-    whistle.unique_id_ = ++whistle_unique_id_;                ///< 指令唯一ID
+    whistle.unique_id_ = unique_id;                           ///< 指令唯一ID
     strcpy(whistle.text, message);                  ///< 设置消息内容
 
     if (msgsnd(whistle_msg_id_, &whistle, sizeof(whistle), 0) == -1)
