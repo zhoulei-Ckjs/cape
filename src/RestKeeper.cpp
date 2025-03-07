@@ -12,6 +12,7 @@
 #include "WorkFlow.h"
 #include "Log.h"
 #include "Dog.h"
+#include "Tools.h"
 
 void RestKeeper::PostMethod(const web::http::http_request& request)
 {
@@ -29,7 +30,6 @@ void RestKeeper::PostMethod(const web::http::http_request& request)
     }
     std::string command = paths.front();
     std::string program = paths.back();
-    cape::cout << cape::time << "[" << command << " " << program << "]" << cape::endl;
     if(command != "start" && command != "check" && command != "stop")
     {
         request.reply(web::http::status_codes::NotImplemented, "未知命令：" + command);
@@ -141,6 +141,11 @@ void RestKeeper::PutMethod(const web::http::http_request& request)
     );
 }
 
+RestKeeper::RestKeeper()
+{
+    whistle_unique_id_ = 0;
+}
+
 void RestKeeper::Initialize()
 {
     /// 进程 pid
@@ -187,16 +192,17 @@ int RestKeeper::IssueCommand(CommandType command_type, const char* message)
     Whistle whistle;
     whistle.type = 1;                                         ///< 设置消息类型
     whistle.command_type_ = command_type;
+    whistle.unique_id_ = ++whistle_unique_id_;                ///< 指令唯一ID
     strcpy(whistle.text, message);                  ///< 设置消息内容
 
     if (msgsnd(msgid, &whistle, sizeof(whistle), 0) == -1)
     {
-        cape::cout << cape::time << "[watcher]: 消息发送失败!" << cape::endl;
+        cape::cout << cape::time << "消息发送失败!" << cape::endl;
         return -1;
     }
 
-    cape::cout << cape::time << "[watcher]: 发送消息: {type: " << command_type << ", text: "
-        << whistle.text << "}" << cape::endl;
+    cape::cout << cape::time << "[" << whistle.unique_id_ << " " <<
+        cape::get_enum_name(command_type) << " " << whistle.text << "]" << cape::endl;
     return 0;
 }
 
@@ -211,6 +217,8 @@ void RestKeeper::RaiseDog()
 
     if(pid == 0)
     {
+        cape::cout.Close();
+        cape::cout.Open("dog.log");
         Dog::Run();
     }
 

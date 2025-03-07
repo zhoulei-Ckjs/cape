@@ -4,6 +4,7 @@
 #include <cpprest/uri_builder.h>
 #include <cpprest/http_listener.h>
 #include <string>
+#include <atomic>
 
 #include "Common.h"
 
@@ -11,6 +12,7 @@ class RestKeeper
 {
 public:
     friend class WorkFlow;
+    RestKeeper();
     void Initialize();
     void RaiseDog();
     void SetUri(std::string uri);
@@ -38,6 +40,9 @@ private :
      * @retval 0 发送成功
      */
     int IssueCommand(CommandType command_type, const char* message);
+
+public :
+    std::atomic<int> whistle_unique_id_;
 
 private :
     web::uri_builder* uri_;

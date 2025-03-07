@@ -11,7 +11,7 @@ namespace cape
 
     Log::OpenStatus Log::Open(char *file_name)
     {
-        dog_log.open(file_name, std::ios::app | std::ios::out);
+        dog_log.open(file_name, std::ios::out | std::ios::trunc);
         if (dog_log.is_open())
             return OPEN_SUCCESS;
         return OPEN_FAILURE;

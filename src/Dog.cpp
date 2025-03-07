@@ -6,6 +6,7 @@
 #include "Dog.h"
 #include "Log.h"
 #include "Common.h"
+#include "Tools.h"
 
 int Dog::msgid = -1;
 
@@ -16,7 +17,7 @@ void Dog::Run()
 
     if (msgid == -1)
     {
-        cape::cout << cape::time << "[Dog]: 消息队列创建失败!" << cape::endl;
+        cape::cout << cape::time << "消息队列创建失败!" << cape::endl;
         kill(-getsid(getpid()), SIGKILL);
     }
 
@@ -26,12 +27,12 @@ void Dog::Run()
     {
         if (msgrcv(msgid, &whistle, sizeof(whistle), 1, 0) == -1)
         {
-            cape::cout << cape::time << "[Dog]: 消息队列接收失败!" << cape::endl;
+            cape::cout << cape::time << "消息队列接收失败!" << cape::endl;
         }
         else
         {
-            cape::cout << cape::time << "[Dog]: 收到消息: {type: " << whistle.command_type_
-            << ", text: " << whistle.text << "}" << cape::endl;
+            cape::cout << cape::time << "[" << whistle.unique_id_ << " " <<
+                cape::get_enum_name(whistle.command_type_) << " " << whistle.text << "]" << cape::endl;
         }
     }
 
@@ -40,4 +41,5 @@ void Dog::Run()
     {
         cape::cout << "[Dog]: 删除消息队列失败!" << cape::endl;
     }
+    cape::cout.Close();
 }

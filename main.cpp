@@ -7,13 +7,13 @@ void StartCape()
 {
     cape::cout << cape::endl;
     cape::cout << "*********************************************" << cape::endl;
-    cape::cout << "            watcher start working            " << cape::endl;
+    cape::cout << "             keeper start working            " << cape::endl;
     cape::cout << "*********************************************" << cape::endl;
 }
 
 int main()
 {
-    cape::cout.Open("cape.log");
+    cape::cout.Open("keeper.log");
     StartCape();
 
     RestKeeper rest_keeper;
