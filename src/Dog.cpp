@@ -2,14 +2,22 @@
 #include <sys/wait.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <vector>
 
 #include "Dog.h"
 #include "Log.h"
 #include "Common.h"
 #include "Tools.h"
+#include "WorkFlow.h"
 
 int Dog::whistle_msg_id_ = -1;
 int Dog::bark_msg_id_ = -1;
+RestKeeper* Dog::master_ = nullptr;
+
+void Dog::SetMaster(RestKeeper* master)
+{
+    master_ = master;
+}
 
 void Dog::Run()
 {
@@ -27,7 +35,46 @@ void Dog::Run()
         {
             cape::cout << cape::time << "[" << whistle.unique_id_ << " " <<
                 cape::get_enum_name(whistle.command_type_) << " " << whistle.text << "]" << cape::endl;
-            IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS);
+
+            switch(whistle.command_type_)
+            {
+                case CommandType::START:
+                {
+                    std::vector<std::string> args;
+                    args.push_back(master_->program_exe_path_[whistle.text]);
+                    pid_t pid_son = WorkFlow::StartProgram(args);
+
+                    if(pid_son > 0)
+                        master_->program_pids_[whistle.text].push_back(pid_son);
+
+                    if(pid_son != -1)
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS);
+                    else
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                }
+                    break;
+                case CommandType::CHECK:
+                {
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                }
+                    break;
+                case CommandType::STOP:
+                {
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                }
+                    break;
+                case CommandType::UPLOAD:
+                {
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                }
+                    break;
+                default:
+                {
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                }
+                    break;
+            }
+
         }
     }
 

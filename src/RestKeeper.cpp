@@ -138,7 +138,7 @@ void RestKeeper::Initialize()
     program_pids_.insert({"wme", std::vector<int>()});
 
     /// 进程路径
-    program_exe_path_.insert({"test", "/root/cape/cmake-build-debug/test/test"});
+    program_exe_path_.insert({"test", "/root/cape/cmake-build-debug-remote-host/test/test"});
     program_exe_path_.insert({"odsp", "/home/hongshan/ODSP/start.sh"});
     program_exe_path_.insert({"ret", "/home/hongshan/RET/start.sh"});
     program_exe_path_.insert({"event_transfer", "/home/hongshan/BEDD_TRANSFER/start.sh"});
@@ -262,6 +262,7 @@ void RestKeeper::RaiseDog()
     {
         cape::cout.Close();
         cape::cout.Open("dog.log");
+        Dog::SetMaster(this);
         Dog::Run();
     }
 

@@ -12,6 +12,7 @@ class RestKeeper
 {
 public:
     friend class WorkFlow;
+    friend class Dog;
     RestKeeper();
     void Initialize();
     void RaiseDog();
