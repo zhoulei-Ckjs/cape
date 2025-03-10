@@ -55,12 +55,17 @@ void Dog::Run()
                     break;
                 case CommandType::CHECK:
                 {
-                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                    std::vector<int> program_pids = WorkFlow::CheckProgram(whistle.text);
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS, program_pids.size());
                 }
                     break;
                 case CommandType::STOP:
                 {
-                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                    StopStatus stop_status = WorkFlow::StopProgram(whistle.text, master_->program_pids_[whistle.text]);
+                    if(stop_status == StopStatus::STOP_SUCCESS)
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS);
+                    else
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
                 }
                     break;
                 case CommandType::UPLOAD:
@@ -70,11 +75,10 @@ void Dog::Run()
                     break;
                 default:
                 {
-                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                    IssueBark(whistle.unique_id_, TaskCompletionStatus::INVALID);
                 }
                     break;
             }
-
         }
     }
 
@@ -107,12 +111,13 @@ void Dog::CreateWhistleAndBark()
     }
 }
 
-void Dog::IssueBark(int unique_id, TaskCompletionStatus status)
+void Dog::IssueBark(int unique_id, TaskCompletionStatus status, int progress_num)
 {
     Bark bark;
     bark.type = 1;                                       ///< 设置消息类型
     bark.unique_id_ = unique_id;                         ///< 指令唯一ID
     bark.status_ = status;                               ///< 设置状态
+    bark.progress_num_ = progress_num;                   ///< 进程存在个数
 
     if (msgsnd(bark_msg_id_, &bark, sizeof(bark), 0) == -1)
     {

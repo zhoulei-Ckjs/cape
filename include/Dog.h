@@ -12,7 +12,7 @@ public :
 
 private :
     static void CreateWhistleAndBark();
-    static void IssueBark(int unique_id, TaskCompletionStatus status);
+    static void IssueBark(int unique_id, TaskCompletionStatus status, int progress_num = -1);
 
 public :
     static int whistle_msg_id_;
