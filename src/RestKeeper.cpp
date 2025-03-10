@@ -153,28 +153,64 @@ void RestKeeper::Initialize()
 void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string& program, const web::http::http_request& request)
 {
     IssueCommand(unique_id, type, program.c_str());
-    TaskCompletionStatus reply_status = TaskCompletionStatus::INVALID;
+    Bark* bark = nullptr;
     for(int i = 0; i < 3000; i++)
     {
-        reply_status = HearBarking(unique_id);
-        if(reply_status != TaskCompletionStatus::INVALID)
+        bark = HearBarking(unique_id);
+        if(bark != nullptr)
             break;
         usleep(1000);
     }
-    switch (reply_status)
+    if(bark == nullptr)
+    {
+        request.reply(web::http::status_codes::RequestTimeout, "启动超时，请检查服务器状态!");
+        return;
+    }
+    switch (bark->status_)
     {
         case TaskCompletionStatus::INVALID:
-            request.reply(web::http::status_codes::RequestTimeout, "启动超时，请检查服务器状态!");
+        {
+            std::stringstream ss;
+            ss << "无效指令[" << cape::get_enum_name(type) << "]!";
+            request.reply(web::http::status_codes::BadRequest, ss.str());
             break;
+        }
         case TaskCompletionStatus::SUCCESS:
-            request.reply(web::http::status_codes::OK, "启动成功!");
+        {
+            switch (type)
+            {
+                case CommandType::START:
+                {
+                    request.reply(web::http::status_codes::OK, "启动成功!");
+                    break;
+                }
+                case CommandType::CHECK:
+                {
+                    std::stringstream ss;
+                    ss << "当前进程个数：" << bark->progress_num_;
+                    request.reply(web::http::status_codes::OK, ss.str());
+                    break;
+                }
+                case CommandType::STOP:
+                {
+                    request.reply(web::http::status_codes::OK, "停止成功!");
+                    break;
+                }
+                default:
+                {
+                    request.reply(web::http::status_codes::OK, "未实现!");
+                    break;
+                }
+            }
             break;
+        }
         case TaskCompletionStatus::FAILED:
             request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
             break;
         default:
             break;
     }
+    delete bark;
 }
 
 int RestKeeper::CreateWhistleAndBark()
@@ -219,17 +255,16 @@ int RestKeeper::IssueCommand(int unique_id, CommandType command_type, const char
     return 0;
 }
 
-TaskCompletionStatus RestKeeper::HearBarking(int unique_id)
+Bark* RestKeeper::HearBarking(int unique_id)
 {
+    Bark *bark = nullptr;
     std::lock_guard<std::mutex> guard(whistle_reply_map_mutex_);
     auto it = whistle_reply_map_.find(unique_id);
     if(it != whistle_reply_map_.end())
     {
-        TaskCompletionStatus status = it->second.status_;
-        whistle_reply_map_.erase(unique_id);
-        return status;
+        bark = new Bark(it->second);
     }
-    return TaskCompletionStatus::INVALID;
+    return bark;
 }
 
 void RestKeeper::ReceiveBark()

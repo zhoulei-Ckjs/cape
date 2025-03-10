@@ -28,6 +28,18 @@ enum TaskCompletionStatus
 
 typedef struct Bark
 {
+    Bark()
+    {
+        status_ = TaskCompletionStatus::INVALID;
+    }
+    Bark(const Bark& bark)
+    {
+        this->type = bark.type;
+        this->unique_id_ = bark.unique_id_;
+        this->status_ = bark.status_;
+        this->progress_num_ = bark.status_;
+    }
+
     long type;                      ///< 消息类型
     int unique_id_;                 ///< 指令唯一标识
     TaskCompletionStatus status_;   ///< 任务完成状态

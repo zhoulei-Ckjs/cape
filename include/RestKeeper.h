@@ -52,9 +52,10 @@ private :
     /**
      * @brief 听狗叫
      * @param unique_id 命令唯一标识
-     * @return 任务完成状态
+     * @return 任务
+     * @retval nullptr 未找到任务
      */
-    TaskCompletionStatus HearBarking(int unique_id);
+    Bark* HearBarking(int unique_id);
 
 public :
     std::atomic<int> whistle_unique_id_;
