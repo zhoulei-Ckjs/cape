@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <string>
+#include <sys/prctl.h>
 
 #include <cpprest/filestream.h>
 
@@ -344,6 +345,9 @@ void RestKeeper::RaiseDog()
 
     if(pid == 0)
     {
+        /// 修改进程名字
+        prctl(PR_SET_NAME, "dog", 0, 0 ,0);
+
         cape::cout.Close();
         cape::cout.Open("dog.log");
         Dog::Voice();

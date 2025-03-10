@@ -11,7 +11,7 @@ void Voice()
     cape::cout << "*********************************************" << cape::endl;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     cape::cout.Open("keeper.log");
     Voice();
