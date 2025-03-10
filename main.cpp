@@ -3,7 +3,7 @@
 #include "Log.h"
 #include "Common.h"
 
-void StartCape()
+void Voice()
 {
     cape::cout << cape::endl;
     cape::cout << "*********************************************" << cape::endl;
@@ -14,7 +14,7 @@ void StartCape()
 int main()
 {
     cape::cout.Open("keeper.log");
-    StartCape();
+    Voice();
 
     RestKeeper rest_keeper;
     rest_keeper.Initialize();

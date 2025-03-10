@@ -14,6 +14,13 @@ int Dog::whistle_msg_id_ = -1;
 int Dog::bark_msg_id_ = -1;
 RestKeeper* Dog::master_ = nullptr;
 
+void Dog::Voice()
+{
+    cape::cout << "*********************************************" << cape::endl;
+    cape::cout << "               dog resurrection              " << cape::endl;
+    cape::cout << "*********************************************" << cape::endl;
+}
+
 void Dog::SetMaster(RestKeeper* master)
 {
     master_ = master;

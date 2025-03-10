@@ -7,6 +7,7 @@
 class Dog
 {
 public :
+    static void Voice();
     static void SetMaster(RestKeeper* master);
     static void Run();
 

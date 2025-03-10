@@ -262,6 +262,7 @@ void RestKeeper::RaiseDog()
     {
         cape::cout.Close();
         cape::cout.Open("dog.log");
+        Dog::Voice();
         Dog::SetMaster(this);
         Dog::Run();
     }
