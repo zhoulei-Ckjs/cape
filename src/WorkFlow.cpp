@@ -45,8 +45,7 @@ pid_t WorkFlow::ExecuteSh(std::vector<std::string>& args_vec)
         execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
 
         cape::cout << cape::time << "[Error]: 进程 [" << args[0] << "] 失败, 退出!!!" << cape::endl;
-        /// 在调用execvp失败的情况下，无法调用exit退出子进程，由于cpprest的原因。
-        kill(getpid(), SIGKILL);
+        exit(-1);
     }
 
     return pid;
