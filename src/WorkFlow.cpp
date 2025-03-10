@@ -5,15 +5,34 @@
 #include "Log.h"
 #include "RestKeeper.h"
 
+void WorkFlow::ExecuteSh(std::vector<std::string>& args_vec)
+{
+    if(args_vec.empty())
+    {
+        cape::cout << cape::time << "[Error]: 启动参数为空!!!" << cape::endl;
+        return;
+    }
+
+    cape::cout << cape::time << "正在启动脚本 [" << args_vec[0] << "] ..." << cape::endl;
+
+    if (access(args_vec[0].c_str(), F_OK) != 0)
+    {
+        cape::cout << cape::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << cape::endl;
+        return;
+    }
+
+
+}
+
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
 {
-    cape::cout << cape::time << "正在启动进程 [" << args_vec[0] << "] ..." << cape::endl;
-
     if(args_vec.empty())
     {
         cape::cout << cape::time << "[Error]: 启动参数为空!!!" << cape::endl;
         return -1;
     }
+
+    cape::cout << cape::time << "正在启动进程 [" << args_vec[0] << "] ..." << cape::endl;
 
     if (access(args_vec[0].c_str(), F_OK) != 0)
     {

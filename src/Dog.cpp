@@ -77,6 +77,11 @@ void Dog::Run()
                     break;
                 case CommandType::UPLOAD:
                 {
+                    std::vector<std::string> args;
+                    args.push_back(master_->program_exe_path_["scenario"]);
+                    args.push_back(whistle.text);
+                    WorkFlow::ExecuteSh(args);      ///< 执行脚本
+
                     IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
                 }
                     break;

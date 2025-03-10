@@ -106,8 +106,10 @@ void RestKeeper::PutMethod(const web::http::http_request& request)
                 try
                 {
                     previousTask.get();  ///< 检查是否有异常
-                    request.reply(web::http::status_codes::OK, U("文件上传成功"));
                     cape::cout << cape::time << "文件接收成功" << cape::endl;
+
+                    int unique_id = ++whistle_unique_id_;
+                    PerformTask(unique_id, CommandType::UPLOAD, file_name, request);
                 }
                 catch (const std::exception& e)
                 {
@@ -148,6 +150,7 @@ void RestKeeper::Initialize()
     program_exe_path_.insert({"logon", "/home/hongshan/LOGON/start.sh"});
     program_exe_path_.insert({"uuas", "/home/hongshan/UUAS/start.sh"});
     program_exe_path_.insert({"wme", "/home/hongshan/WME/start.sh"});
+    program_exe_path_.insert({"scenario", "/home/hongshan/change_scenario.sh"});
 }
 
 void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string& program, const web::http::http_request& request)
@@ -228,7 +231,19 @@ void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string&
         }
         case CommandType::UPLOAD:
         {
-            request.reply(web::http::status_codes::NotImplemented, "未实现!");
+            switch (bark->status_)
+            {
+                case TaskCompletionStatus::SUCCESS:
+                {
+                    request.reply(web::http::status_codes::OK, "更换想定成功!");
+                    break;;
+                }
+                default:
+                {
+                    request.reply(web::http::status_codes::NotImplemented, "未实现!");
+                    break;
+                }
+            }
             break;
         }
         default:

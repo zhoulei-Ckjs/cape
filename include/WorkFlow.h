@@ -13,6 +13,7 @@ enum StopStatus
 class WorkFlow
 {
 public:
+    static void ExecuteSh(std::vector<std::string>& args_vec);
     static pid_t StartProgram(std::vector<std::string>& args_vec);
     static std::vector<int> CheckProgram(const std::string& name);
     static StopStatus StopProgram(const std::string& name, const std::vector<int>& pids);
