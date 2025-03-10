@@ -236,7 +236,7 @@ void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string&
                 case TaskCompletionStatus::SUCCESS:
                 {
                     request.reply(web::http::status_codes::OK, "更换想定成功!");
-                    break;;
+                    break;
                 }
                 case TaskCompletionStatus::FAILED:
                 {
