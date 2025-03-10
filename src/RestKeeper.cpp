@@ -238,6 +238,11 @@ void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string&
                     request.reply(web::http::status_codes::OK, "更换想定成功!");
                     break;;
                 }
+                case TaskCompletionStatus::FAILED:
+                {
+                    request.reply(web::http::status_codes::ExpectationFailed, "更换想定失败，请检查服务器日志!");
+                    break;
+                }
                 default:
                 {
                     request.reply(web::http::status_codes::NotImplemented, "未实现!");

@@ -5,12 +5,12 @@
 #include "Log.h"
 #include "RestKeeper.h"
 
-void WorkFlow::ExecuteSh(std::vector<std::string>& args_vec)
+pid_t WorkFlow::ExecuteSh(std::vector<std::string>& args_vec)
 {
     if(args_vec.empty())
     {
         cape::cout << cape::time << "[Error]: 启动参数为空!!!" << cape::endl;
-        return;
+        return -1;
     }
 
     cape::cout << cape::time << "正在启动脚本 [" << args_vec[0] << "] ..." << cape::endl;
@@ -18,10 +18,38 @@ void WorkFlow::ExecuteSh(std::vector<std::string>& args_vec)
     if (access(args_vec[0].c_str(), F_OK) != 0)
     {
         cape::cout << cape::time << "[Error]: 文件 [" << args_vec[0] << "] 不存在!!!" << cape::endl;
-        return;
+        return -1;
     }
 
+    pid_t pid = fork();
+    if(pid < 0)
+    {
+        cape::cout << cape::time << "[Error]: 启动时创建进程失败!!!" << cape::endl;
+        return -1;
+    }
 
+    if(pid == 0)
+    {
+        pid_t session_id = setsid();
+        if(session_id < 0)
+        {
+            cape::cout << cape::time << "创建会话失败" << cape::endl;
+            kill(getpid(), SIGKILL);
+        }
+        /// 使用 execvp 启动新的程序
+        char *args[4] = {nullptr};
+        for(int i = 0; i < args_vec.size(); i++)
+        {
+            args[i] = const_cast<char*>(args_vec[i].c_str());
+        }
+        execvp(args[0], args); ///< 这会用 待执行的进程 替换当前子进程
+
+        cape::cout << cape::time << "[Error]: 进程 [" << args[0] << "] 失败, 退出!!!" << cape::endl;
+        /// 在调用execvp失败的情况下，无法调用exit退出子进程，由于cpprest的原因。
+        kill(getpid(), SIGKILL);
+    }
+
+    return pid;
 }
 
 pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
@@ -52,7 +80,6 @@ pid_t WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         pid_t session_id = setsid();
         if(session_id < 0)
         {
-            std::cout << "创建会话失败" << std::endl;
             cape::cout << cape::time << "创建会话失败" << cape::endl;
             kill(getpid(), SIGKILL);
         }

@@ -80,9 +80,17 @@ void Dog::Run()
                     std::vector<std::string> args;
                     args.push_back(master_->program_exe_path_["scenario"]);
                     args.push_back(whistle.text);
-                    WorkFlow::ExecuteSh(args);      ///< 执行脚本
+                    pid_t pid_sh = WorkFlow::ExecuteSh(args);      ///< 执行脚本
 
-                    IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                    if(waitpid(pid_sh, NULL, 0) != pid_sh)
+                    {
+                        cape::cout << cape::time << "[Error]: 回收进程失败" << cape::endl;
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::FAILED);
+                    }
+                    else
+                    {
+                        IssueBark(whistle.unique_id_, TaskCompletionStatus::SUCCESS);
+                    }
                 }
                     break;
                 default:
