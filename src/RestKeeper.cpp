@@ -166,49 +166,78 @@ void RestKeeper::PerformTask(int unique_id, CommandType type, const std::string&
         request.reply(web::http::status_codes::RequestTimeout, "启动超时，请检查服务器状态!");
         return;
     }
-    switch (bark->status_)
+    switch(type)
     {
-        case TaskCompletionStatus::INVALID:
+        case CommandType::START:
         {
-            std::stringstream ss;
-            ss << "无效指令[" << cape::get_enum_name(type) << "]!";
-            request.reply(web::http::status_codes::BadRequest, ss.str());
-            break;
-        }
-        case TaskCompletionStatus::SUCCESS:
-        {
-            switch (type)
+            switch (bark->status_)
             {
-                case CommandType::START:
+                case TaskCompletionStatus::SUCCESS:
                 {
                     request.reply(web::http::status_codes::OK, "启动成功!");
                     break;
                 }
-                case CommandType::CHECK:
+                case TaskCompletionStatus::FAILED:
+                {
+                    request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+                    break;
+                }
+                default:
+                {
+                    request.reply(web::http::status_codes::ExpectationFailed, "未实现!");
+                    break;
+                }
+            }
+            break;
+        }
+        case CommandType::CHECK:
+        {
+            switch(bark->status_)
+            {
+                case TaskCompletionStatus::SUCCESS:
                 {
                     std::stringstream ss;
                     ss << "当前进程个数：" << bark->progress_num_;
                     request.reply(web::http::status_codes::OK, ss.str());
                     break;
                 }
-                case CommandType::STOP:
-                {
-                    request.reply(web::http::status_codes::OK, "停止成功!");
-                    break;
-                }
                 default:
                 {
-                    request.reply(web::http::status_codes::OK, "未实现!");
+                    request.reply(web::http::status_codes::ExpectationFailed, "未实现");
                     break;
                 }
             }
             break;
         }
-        case TaskCompletionStatus::FAILED:
-            request.reply(web::http::status_codes::ExpectationFailed, "启动失败!");
+        case CommandType::STOP:
+        {
+            switch (bark->status_)
+            {
+                case TaskCompletionStatus::SUCCESS:
+                {
+                    request.reply(web::http::status_codes::OK, "停止成功!");
+                    break;;
+                }
+                default:
+                {
+                    request.reply(web::http::status_codes::NotImplemented, "未实现!");
+                    break;
+                }
+            }
             break;
+        }
+        case CommandType::UPLOAD:
+        {
+            request.reply(web::http::status_codes::NotImplemented, "未实现!");
+            break;
+        }
         default:
+        {
+            std::stringstream ss;
+            ss << "无效指令[" << cape::get_enum_name(type) << "]!";
+            request.reply(web::http::status_codes::BadRequest, ss.str());
             break;
+        }
     }
     delete bark;
 }
