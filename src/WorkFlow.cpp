@@ -20,7 +20,7 @@ int WorkFlow::StartProgram(std::vector<std::string>& args_vec)
         char *args[4] = {nullptr};
         for(int i = 0; i < args_vec.size(); i++)
         {
-            args[i] = args_vec[i].data();
+            args[i] = const_cast<char*>(args_vec[i].c_str());
         }
         execvp(args[0], args); // 这会用 ls 命令替换当前子进程
         std::cerr << "进程启动失败" << std::endl;
